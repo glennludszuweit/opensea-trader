@@ -14,8 +14,6 @@ const useStyles = makeStyles({
     textAlign: "center",
     maxWidth: "60px",
     margin: "5px 20px",
-    paddingLeft: "10px",
-    paddingRight: "10px",
     "& .MuiInput-input": {
       "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
         "-webkit-appearance": "none",
@@ -63,6 +61,8 @@ const Search = ({
   setTokenAddress,
   tokenIds,
   setTokenIds,
+  setIsSearching,
+  setLoading,
 }) => {
   const classes = useStyles();
   const [idValue, setIdValue] = useState("");
@@ -86,8 +86,6 @@ const Search = ({
     handleTokenIdsBlur,
     handleTokenIdChange,
   };
-
-  console.log({ tokenAddress, tokenIds });
 
   return (
     <>

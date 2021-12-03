@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { WyvernSchemaName } from "opensea-js/lib/types";
 import { Container, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
@@ -9,11 +9,19 @@ import Sell from "./Sell";
 import Bid from "./Bid";
 import Auction from "./Auction";
 import Home from "./Home";
+import { variables } from "../config";
+import { fetchAndRetryIfNecessary } from "../utils";
+import Connect from "./Connect";
+
+const { BOTB_CONTRACT, MOCK_IDS } = variables;
 
 const useStyles = makeStyles({
   header: {
-    marginTop: "30px",
-    padding: "10px",
+    padding: "20px 0",
+    display: "flex !important",
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 5,
   },
   main: {
     display: "flex",
@@ -33,33 +41,27 @@ const Main = ({ seaport }) => {
   const [page, setPage] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [tokenIds, setTokenIds] = useState([]);
+  const [account, setAccount] = useState("");
+  const [tokenAddress, setTokenAddress] = useState(BOTB_CONTRACT);
+  const [tokenIds, setTokenIds] = useState(MOCK_IDS);
   const [assets, setAssets] = useState([]);
   const [hasError, setHasError] = useState({
     status: false,
     message: "",
   });
 
+  const apiUrl = (id) =>
+    `https://api.opensea.io/api/v1/asset/${tokenAddress}/${id}`;
+
   const openSeaData = async () => {
-    setLoading(true);
     try {
-      const data = await Promise.all(
-        tokenIds.map(
-          async (id) =>
-            await seaport.api.getAsset({
-              tokenAddress, // The asset's contract address
-              tokenId: id, // The asset's token ID
-              schemaName: WyvernSchemaName.ERC721, //// The Wyvern schema name defaults ERC-721
-            })
+      const response = await Promise.all(
+        tokenIds.map((id) =>
+          fetch(apiUrl(id), { method: "GET" }).then((res) => res.json())
         )
       );
-      if (data) {
-        setLoading(false);
-        return data;
-      }
+      return response;
     } catch (error) {
-      setLoading(false);
       console.log(error.messsage);
       setHasError({
         status: true,
@@ -70,9 +72,16 @@ const Main = ({ seaport }) => {
   };
 
   const handleAssetLoad = async () => {
-    const data = await openSeaData();
-    setAssets(data);
-    setIsSearching(false);
+    const response = await fetchAndRetryIfNecessary(
+      async () => await openSeaData()
+    );
+    setLoading(true);
+    setAssets(response);
+    setTimeout(() => {
+      console.log(response);
+      setLoading(false);
+      setIsSearching(false);
+    }, 5000);
   };
 
   const handleBid = async () => {};
@@ -86,6 +95,7 @@ const Main = ({ seaport }) => {
   const commonStateProps = {
     handleAssetLoad,
     assets,
+    setAssets,
     tokenAddress,
     setTokenAddress,
     tokenIds,
@@ -93,29 +103,37 @@ const Main = ({ seaport }) => {
     isSearching,
     setIsSearching,
     hasError,
+    setLoading,
   };
 
   return (
     <>
-      {page && (
-        <Container className={classes.header} maxWidth='md' disableGutters>
-          <IconButton
-            onClick={() => {
-              setTokenAddress("");
-              setTokenIds([]);
-              setPage("");
-              setHasError({
-                status: false,
-                message: "",
-              });
-            }}
-          >
-            <Close />
-          </IconButton>
-        </Container>
-      )}
+      <Container className={classes.header} maxWidth='md' disableGutters>
+        <div>
+          {page && (
+            <IconButton
+              onClick={() => {
+                setTokenAddress("");
+                setTokenIds([]);
+                setPage("");
+                setHasError({
+                  status: false,
+                  message: "",
+                });
+              }}
+            >
+              <Close />
+            </IconButton>
+          )}
+        </div>
+
+        <Connect account={account} setAccount={setAccount} />
+      </Container>
+
       <Container className={classes.main} maxWidth='md' disableGutters>
-        {!page ? (
+        {loading ? (
+          <Loading />
+        ) : !page ? (
           <Home setPage={setPage} setIsSearching={setIsSearching} />
         ) : page === "Bid" ? (
           <Bid handleBid={handleBid} {...commonStateProps} />
@@ -125,8 +143,6 @@ const Main = ({ seaport }) => {
           <Buy handleBuy={handleBuy} {...commonStateProps} />
         ) : page === "Sell" ? (
           <Sell handleSell={handleSell} {...commonStateProps} />
-        ) : loading ? (
-          <Loading />
         ) : null}
       </Container>
     </>
