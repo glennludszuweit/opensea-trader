@@ -1,11 +1,11 @@
-import { Button } from "@mui/material";
+import { Button } from '@mui/material';
 
 const Connect = ({ account, setAccount }) => {
   const handleConnect = async () => {
     let provider = window.ethereum;
-    if (typeof provider !== "undefined") {
+    if (typeof provider !== 'undefined') {
       const res = await provider
-        .request({ method: "eth_requestAccounts" })
+        .request({ method: 'eth_requestAccounts' })
         .then((acc) => acc);
 
       setAccount(res[0]);
@@ -15,7 +15,7 @@ const Connect = ({ account, setAccount }) => {
 
   return (
     <Button variant='contained' onClick={handleConnect} disableElevation>
-      {account ? account : "Connect Wallet"}
+      {account ? account : 'Connect Wallet'}
     </Button>
   );
 };
