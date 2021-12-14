@@ -11,7 +11,7 @@ import {
   ImageListItem,
   Typography,
 } from '@mui/material';
-import { Favorite } from '@mui/icons-material';
+import { PlaylistAdd } from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import Loading from '../components/Loading';
@@ -149,7 +149,7 @@ const Dashboard = ({
                   }
                   action={
                     <IconButton sx={{ marginTop: '-8px' }}>
-                      <Favorite sx={{ fontSize: '14px' }} />
+                      <PlaylistAdd sx={{ fontSize: '14px' }} />
                     </IconButton>
                   }
                 ></CardHeader>

@@ -1,5 +1,5 @@
 import { RestartAlt } from '@mui/icons-material';
-import { Autocomplete, IconButton, Stack, TextField } from '@mui/material';
+import { Autocomplete, Grid, IconButton, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useEffect, useState } from 'react';
 import { filterDuplicateObjects, formatEth } from '../utils';
@@ -23,25 +23,28 @@ const eventOptions = ['All', 'For sale', 'Has offers'];
 
 const sortOptions = ['Newest', 'Highest price', 'Lowest price'];
 
-const Filter = ({
-  userAssets,
-  displayData,
-  setDisplayData,
-  collectionNames,
-  loading,
-}) => {
+const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   const classes = useStyles();
   const [selectedCollection, setSelectedCollection] = useState('');
   const [eventType, setEventType] = useState('');
   const [sort, setSort] = useState('');
+  const [search, setSearch] = useState('');
 
-  const hasOffers = displayData
-    .map((x) => x?.hasOfferOrders?.length && x)
-    .filter(Boolean);
+  const hasOffers = (array) =>
+    array.map((x) => x?.hasOfferOrders?.length && x).filter(Boolean);
 
-  const isSelling = displayData
-    .map((x) => x?.hasSellOrders?.length && x)
-    .filter(Boolean);
+  const isSelling = (array) =>
+    array.map((x) => x?.hasSellOrders?.length && x).filter(Boolean);
+
+  const searchResults = (array) => {
+    const result = array.filter(
+      (asset) =>
+        asset.token_id.includes(search) ||
+        asset.collection.name.includes(search) ||
+        asset.owner.user.username.includes(search)
+    );
+    return result;
+  };
 
   const sortByNewest = (array) => {
     const lastSale = array
@@ -100,38 +103,94 @@ const Filter = ({
   useEffect(() => {
     if (!selectedCollection || selectedCollection === 'All') {
       if (eventType === 'For sale') {
-        setDisplayData(isSelling);
+        if (sort === 'Highest price') {
+          setDisplayData(searchResults(sortByPrice(isSelling(userAssets), 1)));
+        } else if (sort === 'Lowest price') {
+          setDisplayData(searchResults(sortByPrice(isSelling(userAssets), 2)));
+        } else {
+          setDisplayData(searchResults(sortByNewest(isSelling(userAssets))));
+        }
       } else if (eventType === 'Has offers') {
-        setDisplayData(hasOffers);
+        if (sort === 'Highest price') {
+          setDisplayData(searchResults(sortByPrice(hasOffers(userAssets), 1)));
+        } else if (sort === 'Lowest price') {
+          setDisplayData(searchResults(sortByPrice(hasOffers(userAssets), 2)));
+        } else {
+          setDisplayData(searchResults(sortByNewest(hasOffers(userAssets))));
+        }
       } else {
         if (sort === 'Highest price') {
-          setDisplayData(sortByPrice(userAssets, 1));
+          setDisplayData(searchResults(sortByPrice(userAssets, 1)));
         } else if (sort === 'Lowest price') {
-          setDisplayData(sortByPrice(userAssets, 2));
+          setDisplayData(searchResults(sortByPrice(userAssets, 2)));
         } else {
-          setDisplayData(sortByNewest(userAssets));
+          setDisplayData(searchResults(sortByNewest(userAssets)));
         }
       }
     } else {
       if (eventType === 'For sale') {
-        setDisplayData(filteredWithCollection(isSelling));
+        if (sort === 'Highest price') {
+          setDisplayData(
+            searchResults(
+              sortByPrice(filteredWithCollection(isSelling(userAssets)), 1)
+            )
+          );
+        } else if (sort === 'Lowest price') {
+          setDisplayData(
+            searchResults(
+              sortByPrice(filteredWithCollection(isSelling(userAssets)), 2)
+            )
+          );
+        } else {
+          setDisplayData(
+            searchResults(
+              sortByNewest(filteredWithCollection(isSelling(userAssets)))
+            )
+          );
+        }
       } else if (eventType === 'Has offers') {
-        filteredWithCollection(hasOffers);
+        if (sort === 'Highest price') {
+          setDisplayData(
+            searchResults(
+              sortByPrice(filteredWithCollection(hasOffers(userAssets)), 1)
+            )
+          );
+        } else if (sort === 'Lowest price') {
+          setDisplayData(
+            searchResults(
+              sortByPrice(filteredWithCollection(hasOffers(userAssets)), 2)
+            )
+          );
+        } else {
+          setDisplayData(
+            searchResults(
+              sortByNewest(filteredWithCollection(hasOffers(userAssets)))
+            )
+          );
+        }
       } else {
-        setDisplayData(filteredWithCollection(userAssets));
+        if (sort === 'Highest price') {
+          setDisplayData(
+            searchResults(sortByPrice(filteredWithCollection(userAssets), 1))
+          );
+        } else if (sort === 'Lowest price') {
+          setDisplayData(
+            searchResults(sortByPrice(filteredWithCollection(userAssets), 2))
+          );
+        } else {
+          setDisplayData(
+            searchResults(sortByNewest(filteredWithCollection(userAssets)))
+          );
+        }
       }
     }
-  }, [eventType, selectedCollection, sort]);
+  }, [eventType, selectedCollection, sort, search]);
 
-  useEffect(() => {
-    if (sort === 'Highest price') {
-      setDisplayData(sortByPrice(displayData, 1));
-    } else if (sort === 'Lowest price') {
-      setDisplayData(sortByPrice(displayData, 2));
-    } else {
-      setDisplayData(sortByNewest(displayData));
-    }
-  }, [sort]);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.value);
+    console.log(search);
+  };
 
   const handleCollectionChange = (e, value) => {
     setSelectedCollection(value);
@@ -145,77 +204,101 @@ const Filter = ({
     setSort(value);
   };
 
+  const resetFilter = () => {
+    setSearch('');
+    setSelectedCollection('');
+    setEventType('');
+    setSort('');
+  };
+
   return (
-    <Stack
-      spacing={2}
-      direction='row'
-      alignItems='center'
-      className={classes.root}
-    >
-      <Autocomplete
-        freeSolo
-        fullWidth
-        disabled={!collectionNames}
-        className={classes.textField}
-        inputValue={selectedCollection}
-        onInputChange={handleCollectionChange}
-        options={['All', ...collectionNames]}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            size='small'
-            placeholder={collectionNames ? 'Collection' : 'Loading...'}
-            InputProps={{
-              ...params.InputProps,
-              type: 'text',
-            }}
-          />
-        )}
-      />
-      <Autocomplete
-        freeSolo
-        fullWidth
-        disabled={!collectionNames}
-        className={classes.textField}
-        inputValue={eventType}
-        onInputChange={handleEventTypeChange}
-        options={eventOptions}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            size='small'
-            placeholder={collectionNames ? 'Filter by' : 'Loading...'}
-            InputProps={{
-              ...params.InputProps,
-              type: 'text',
-            }}
-          />
-        )}
-      />
-      <Autocomplete
-        freeSolo
-        fullWidth
-        disabled={!collectionNames}
-        className={classes.textField}
-        inputValue={sort}
-        onInputChange={handleSortingChange}
-        options={sortOptions}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            size='small'
-            placeholder={collectionNames ? 'Sort by' : 'Loading...'}
-            InputProps={{
-              ...params.InputProps,
-              type: 'text',
-            }}
-          />
-        )}
-      />
-      <IconButton>
-        <RestartAlt sx={{ fontSize: '30px' }} color='light' />
-      </IconButton>
-    </Stack>
+    <Grid container spacing={2} alignItems='center' className={classes.root}>
+      <Grid item xs={12} md={6} lg={4}>
+        <TextField
+          type='search'
+          className={classes.textField}
+          size='small'
+          placeholder={collectionNames ? 'Search' : 'Loading...'}
+          fullWidth
+          onChange={handleSearch}
+        />
+      </Grid>
+      <Grid item xs={12} md={6} lg={2.5}>
+        <Autocomplete
+          freeSolo
+          fullWidth
+          disabled={!collectionNames}
+          className={classes.textField}
+          inputValue={selectedCollection}
+          onInputChange={handleCollectionChange}
+          options={['All', ...collectionNames]}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              size='small'
+              placeholder={collectionNames ? 'Collection' : 'Loading...'}
+              InputProps={{
+                ...params.InputProps,
+                type: 'text',
+              }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6} lg={2.5}>
+        <Autocomplete
+          freeSolo
+          fullWidth
+          disabled={!collectionNames}
+          className={classes.textField}
+          inputValue={eventType}
+          onInputChange={handleEventTypeChange}
+          options={eventOptions}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              size='small'
+              placeholder={collectionNames ? 'Filter by' : 'Loading...'}
+              InputProps={{
+                ...params.InputProps,
+                type: 'text',
+              }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6} lg={3}>
+        <Grid container spacing={1} alignItems='center'>
+          <Grid item xs={11}>
+            <Autocomplete
+              freeSolo
+              fullWidth
+              disabled={!collectionNames}
+              className={classes.textField}
+              inputValue={sort}
+              onInputChange={handleSortingChange}
+              options={sortOptions}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  size='small'
+                  placeholder={collectionNames ? 'Sort by' : 'Loading...'}
+                  InputProps={{
+                    ...params.InputProps,
+                    type: 'text',
+                  }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={1} alignContent='right'>
+            <IconButton onClick={resetFilter}>
+              <RestartAlt sx={{ fontSize: '30px' }} color='light' />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
