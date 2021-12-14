@@ -1,12 +1,10 @@
-import Web3 from 'web3';
 import { OpenSeaPort, Network } from 'opensea-js';
 import { variables } from './config';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import Main from './pages/Main';
+import { theme } from './theme';
 
 const { YOUR_API_KEY } = variables;
-
-const mdTheme = createTheme();
 
 const provider = window.ethereum;
 
@@ -17,7 +15,7 @@ const seaport = new OpenSeaPort(provider, {
 
 const App = () => {
   return (
-    <ThemeProvider theme={mdTheme}>
+    <ThemeProvider theme={theme}>
       <Main seaport={seaport} />
     </ThemeProvider>
   );

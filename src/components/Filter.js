@@ -2,6 +2,7 @@ import { RestartAlt } from '@mui/icons-material';
 import { Autocomplete, IconButton, Stack, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { useEffect, useState } from 'react';
+import { filterDuplicateObjects, formatEth } from '../utils';
 const useStyles = makeStyles({
   root: {
     marginBottom: '15px',
@@ -20,68 +21,117 @@ const useStyles = makeStyles({
 
 const eventOptions = ['All', 'For sale', 'Has offers'];
 
-const sortOptions = ['Newest', 'Highest price', 'Lowest price', 'Oldest'];
+const sortOptions = ['Newest', 'Highest price', 'Lowest price'];
 
 const Filter = ({
   userAssets,
   displayData,
   setDisplayData,
   collectionNames,
+  loading,
 }) => {
   const classes = useStyles();
   const [selectedCollection, setSelectedCollection] = useState('');
   const [eventType, setEventType] = useState('');
   const [sort, setSort] = useState('');
 
-  const filteredWithCollection = userAssets.filter(
-    (item) => item.collection.name === selectedCollection
-  );
-  const assetWithOrder = (orderType) => {
-    const sellOrder = userAssets.filter((item) => {
-      if (selectedCollection && selectedCollection !== 'All') {
+  const hasOffers = displayData
+    .map((x) => x?.hasOfferOrders?.length && x)
+    .filter(Boolean);
+
+  const isSelling = displayData
+    .map((x) => x?.hasSellOrders?.length && x)
+    .filter(Boolean);
+
+  const sortByNewest = (array) => {
+    const lastSale = array
+      .filter((data) => data.last_sale)
+      .sort((a, b) => {
         return (
-          item.collection.name === selectedCollection &&
-          item.sell_orders?.length &&
-          item
+          new Date(b.last_sale.event_timestamp) -
+          new Date(a.last_sale.event_timestamp)
         );
-      } else {
-        return item.sell_orders?.length && item;
-      }
-    });
-    const hasOffer = userAssets.filter((item) => {
-      if (selectedCollection && selectedCollection !== 'All') {
+      });
+    const createdDate = array
+      .filter((data) => !data.last_sale)
+      .sort((a, b) => {
         return (
-          item.collection.name === selectedCollection && item.top_bid && item
+          new Date(b.asset_contract.created_date) -
+          new Date(a.asset_contract.created_date)
         );
-      } else {
-        return item?.top_bid && item;
-      }
+      });
+    const sortedData = [...lastSale, ...createdDate];
+    return filterDuplicateObjects(sortedData);
+  };
+
+  const sortByPrice = (array, direction) => {
+    const byOrderPrice = array
+      .filter((data) => data.hasOfferOrders.length || data.hasSellOrders.length)
+      .map((el) => {
+        return {
+          ...el,
+          orderPrice: el.hasSellOrders.length
+            ? el.hasSellOrders[0].base_price
+            : el.hasOfferOrders[0].base_price,
+        };
+      })
+      .sort((a, b) =>
+        direction === 1
+          ? formatEth(b.orderPrice) - formatEth(a.orderPrice)
+          : formatEth(a.orderPrice) - formatEth(b.orderPrice)
+      );
+    const rest = array.filter(
+      (data) => !data.hasOfferOrders.length || !data.hasSellOrders.length
+    );
+    const sortedData = [...byOrderPrice, ...rest].map((x) => {
+      delete x.orderPrice;
+      return x;
     });
-    return orderType === 'sell_orders'
-      ? setDisplayData(sellOrder)
-      : orderType === 'top_bid'
-      ? setDisplayData(hasOffer)
-      : null;
+    return filterDuplicateObjects(sortedData);
+  };
+
+  const filteredWithCollection = (array) => {
+    const filtered = array.filter(
+      (item) => item.collection.name === selectedCollection
+    );
+    return filtered;
   };
 
   useEffect(() => {
-    const restCondition =
-      !selectedCollection ||
-      selectedCollection === 'All' ||
-      (selectedCollection && selectedCollection !== 'All');
-    if (
-      (!selectedCollection || selectedCollection === 'All') &&
-      (!eventType || eventType === 'All')
-    ) {
-      setDisplayData(userAssets);
-    } else if (restCondition && eventType === 'For sale') {
-      assetWithOrder('sell_orders');
-    } else if (restCondition && eventType === 'Has offers') {
-      assetWithOrder('top_bid');
+    if (!selectedCollection || selectedCollection === 'All') {
+      if (eventType === 'For sale') {
+        setDisplayData(isSelling);
+      } else if (eventType === 'Has offers') {
+        setDisplayData(hasOffers);
+      } else {
+        if (sort === 'Highest price') {
+          setDisplayData(sortByPrice(userAssets, 1));
+        } else if (sort === 'Lowest price') {
+          setDisplayData(sortByPrice(userAssets, 2));
+        } else {
+          setDisplayData(sortByNewest(userAssets));
+        }
+      }
     } else {
-      setDisplayData(filteredWithCollection);
+      if (eventType === 'For sale') {
+        setDisplayData(filteredWithCollection(isSelling));
+      } else if (eventType === 'Has offers') {
+        filteredWithCollection(hasOffers);
+      } else {
+        setDisplayData(filteredWithCollection(userAssets));
+      }
     }
-  }, [eventType, selectedCollection]);
+  }, [eventType, selectedCollection, sort]);
+
+  useEffect(() => {
+    if (sort === 'Highest price') {
+      setDisplayData(sortByPrice(displayData, 1));
+    } else if (sort === 'Lowest price') {
+      setDisplayData(sortByPrice(displayData, 2));
+    } else {
+      setDisplayData(sortByNewest(displayData));
+    }
+  }, [sort]);
 
   const handleCollectionChange = (e, value) => {
     setSelectedCollection(value);
@@ -93,21 +143,6 @@ const Filter = ({
 
   const handleSortingChange = (e, value) => {
     setSort(value);
-    const filtered = userAssets.filter((item) => {
-      if (item.orders && item.orders.length) {
-        if (value === 'Highest price') {
-          return item.orders.sale_kind === 0;
-        } else if (value === 'Lowest price') {
-          return item?.orders[0].sale_kind === 1;
-        }
-        if (value === 'Lowest price') {
-          return item?.orders[0].sale_kind === 1;
-        } else {
-          return item;
-        }
-      }
-    });
-    setDisplayData(filtered);
   };
 
   return (
@@ -129,7 +164,7 @@ const Filter = ({
           <TextField
             {...params}
             size='small'
-            placeholder='Collection'
+            placeholder={collectionNames ? 'Collection' : 'Loading...'}
             InputProps={{
               ...params.InputProps,
               type: 'text',
@@ -140,6 +175,7 @@ const Filter = ({
       <Autocomplete
         freeSolo
         fullWidth
+        disabled={!collectionNames}
         className={classes.textField}
         inputValue={eventType}
         onInputChange={handleEventTypeChange}
@@ -148,7 +184,7 @@ const Filter = ({
           <TextField
             {...params}
             size='small'
-            placeholder='Event type'
+            placeholder={collectionNames ? 'Filter by' : 'Loading...'}
             InputProps={{
               ...params.InputProps,
               type: 'text',
@@ -158,8 +194,8 @@ const Filter = ({
       />
       <Autocomplete
         freeSolo
-        disabled
         fullWidth
+        disabled={!collectionNames}
         className={classes.textField}
         inputValue={sort}
         onInputChange={handleSortingChange}
@@ -168,7 +204,7 @@ const Filter = ({
           <TextField
             {...params}
             size='small'
-            placeholder='Sort by'
+            placeholder={collectionNames ? 'Sort by' : 'Loading...'}
             InputProps={{
               ...params.InputProps,
               type: 'text',
@@ -177,7 +213,7 @@ const Filter = ({
         )}
       />
       <IconButton>
-        <RestartAlt sx={{ fontSize: '30px' }} color='primary' />
+        <RestartAlt sx={{ fontSize: '30px' }} color='light' />
       </IconButton>
     </Stack>
   );

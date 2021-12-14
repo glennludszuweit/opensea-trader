@@ -14,8 +14,17 @@ const Connect = ({ account, setAccount }) => {
   };
 
   return (
-    <Button variant='contained' onClick={handleConnect} disableElevation>
-      {account ? account : 'Connect Wallet'}
+    <Button
+      variant='contained'
+      color='secondary'
+      onClick={handleConnect}
+      disableElevation
+    >
+      {account
+        ? account.substring(0, 4) +
+          '.....' +
+          account.substring(account.length - 4)
+        : 'Connect Wallet'}
     </Button>
   );
 };

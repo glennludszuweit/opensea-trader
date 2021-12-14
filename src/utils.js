@@ -1,3 +1,5 @@
+import web3 from 'web3';
+
 export const setLS = (state) => {
   localStorage.setItem('_State', JSON.stringify(state));
 };
@@ -31,4 +33,21 @@ export const fetchAndRetryIfNecessary = async (callAPI) => {
     return fetchAndRetryIfNecessary(callAPI);
   }
   return response;
+};
+
+export const formatEth = (num) => {
+  const formated = Number(web3.utils.fromWei(num));
+  const amount = parseFloat(formated)
+    .toFixed(3)
+    .replace(/\.?0+$/, '');
+  return amount;
+};
+
+export const filterDuplicateObjects = (array) => {
+  const stringed = array.map((item) => JSON.stringify(item));
+  const parsed = [...new Set(stringed)].map((item) => {
+    setTimeout(() => null, 3000);
+    return JSON.parse(item);
+  });
+  return parsed;
 };

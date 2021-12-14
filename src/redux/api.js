@@ -25,7 +25,13 @@ const api = {
       options
     );
   },
-  getUserAssetsOrders: (
+  getUserEvents: (account, offset, limit) => {
+    return axios.get(
+      `${API_BASE_URI}/events?account_address=${account}&event_type=transfer&only_opensea=false&offset=${offset}&limit=${limit}`,
+      options
+    );
+  },
+  getUserSellOrders: (
     account,
     offset,
     limit,
@@ -35,7 +41,21 @@ const api = {
     inBundled = false
   ) => {
     return axios.get(
-      `${ORDERS_API_URI}/orders?owner=${account}&bundled=${bundled}&include_bundled=${inBundled}&limit=${limit}&offset=${offset}&order_by=${orderBy}&order_direction=${sortBy}`,
+      `${ORDERS_API_URI}/orders?owner=${account}&taker=${account}&side=1&bundled=${bundled}&include_bundled=${inBundled}&limit=${limit}&offset=${offset}&order_by=${orderBy}&order_direction=${sortBy}`,
+      orderOptions
+    );
+  },
+  getUserHasOffers: (
+    account,
+    offset,
+    limit,
+    orderBy = 'created_date',
+    sortBy = 'desc',
+    bundled = false,
+    inBundled = false
+  ) => {
+    return axios.get(
+      `${ORDERS_API_URI}/orders?owner=${account}&taker=${account}&side=0&bundled=${bundled}&include_bundled=${inBundled}&limit=${limit}&offset=${offset}&order_by=${orderBy}&order_direction=${sortBy}`,
       orderOptions
     );
   },

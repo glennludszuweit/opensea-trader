@@ -87,7 +87,7 @@ const Main = ({ seaport }) => {
       <SideNav {...commonStateProps} />
       <Box component='main' className={classes.wrapper}>
         <Toolbar />
-        <Container className={classes.container}>
+        <Container className={classes.container} maxWidth='100%'>
           <Paper className={classes.main}>
             <Routes>
               {/* side nav 1st row */}

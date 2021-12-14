@@ -1,4 +1,16 @@
 import { initialState } from './store';
+import { filterDuplicateObjects } from '../utils';
+
+const meregeDuplicateOrders = (array) => {
+  const filtered = Object.values(
+    array.reduce((accu, { asset, ...rest }) => {
+      if (!accu[asset.id]) accu[asset.id] = {};
+      accu[asset.id] = { asset, ...accu[asset.id], ...rest };
+      return accu;
+    }, {})
+  );
+  return filtered;
+};
 
 const reducers = {
   assets: (state = initialState.assets, action) => {
@@ -23,39 +35,64 @@ const reducers = {
         };
 
       case 'GET_USER_ASSETS':
-        const userAssetsArr = [...state.userAssets, ...action.userAssets].map(
-          (item) => JSON.stringify(item)
-        );
-        const userAssets = [...new Set(userAssetsArr)].map((item) => {
-          setTimeout(() => null, 3000);
-          return JSON.parse(item);
+        const mergeAssetsArr = filterDuplicateObjects([
+          ...state.userAssets,
+          ...action.userAssets,
+        ]);
+
+        const mergeWithOrders = mergeAssetsArr.map((asset) => {
+          const hasSellOrders = state.assetsOrders.sellOrders.filter(
+            (order) => order.asset.id === asset.id
+          );
+          const hasOfferOrders = state.assetsOrders.hasOffers.filter(
+            (order) => order.asset.id === asset.id
+          );
+          return { ...asset, hasSellOrders, hasOfferOrders };
         });
+
+        const userAssets = filterDuplicateObjects(mergeWithOrders).map(
+          (asset) => {
+            if (asset.hasOfferOrders.length) {
+              asset.hasOfferOrders.forEach((order) => {
+                delete order.asset;
+              });
+            }
+            if (asset.hasSellOrders.length) {
+              asset.hasSellOrders.forEach((order) => {
+                delete order.asset;
+              });
+            }
+            return asset;
+          }
+        );
 
         return {
           ...state,
-          userAssets: userAssets,
+          userAssets,
           web3Address: action.web3Address,
-          collectionNames: [
-            ...new Set([...state.collectionNames, ...action.collectionNames]),
-          ],
         };
 
       case 'GET_USER_ASSETS_ORDERS':
+        const sellOrders = filterDuplicateObjects([
+          ...state.assetsOrders.sellOrders,
+          ...action.sellOrders,
+        ]);
+        const hasOffers = filterDuplicateObjects([
+          ...state.assetsOrders.hasOffers,
+          ...action.hasOffers,
+        ]);
         return {
           ...state,
           assetsOrders: {
-            sellOrders: [
-              ...state.assetsOrders.sellOrders,
-              ...action.sellOrders,
-            ],
-            buyOrders: [...state.assetsOrders.buyOrders, ...action.buyOrders],
+            sellOrders,
+            hasOffers,
           },
         };
 
-      case 'RESET_USER_ASSETS':
+      case 'REMOVE_ORDER_ASSETS':
         return {
           ...state,
-          userAssets: [],
+          assetsOrders: {},
         };
 
       default:

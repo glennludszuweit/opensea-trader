@@ -7,7 +7,6 @@ const actions = {
         tokenIds.filter(Boolean).map((id) => api.getAsset(tokenAddress, id))
       );
       const data = await Promise.all(response.map((res) => res.data));
-      console.log(data);
       dispatch({
         type: 'GET_ASSETS',
         data,
@@ -38,15 +37,15 @@ const actions = {
       const { data } = await api.getUserAssets(account, offset, limit);
       const newAssets = await data.assets;
 
-      const collectionNames = await data.assets.map(
-        (item) => item.collection.name
-      );
+      console.log(data);
+
+      // const assets = await events.data;
+      // console.log(assets);
 
       dispatch({
         type: 'GET_USER_ASSETS',
         web3Address: account,
         userAssets: newAssets,
-        collectionNames: collectionNames,
       });
     } catch (error) {
       console.log(error.message);
@@ -54,26 +53,24 @@ const actions = {
   },
   getUserAssetsOrders: (account, offset, limit) => async (dispatch) => {
     try {
-      const response = await api.getUserAssetsOrders(account, offset, limit);
-      const { orders } = await response.data;
+      const getSellOrders = await api.getUserSellOrders(account, offset, limit);
+      const getHasOffers = await api.getUserHasOffers(account, offset, limit);
 
-      const sellOrders = orders.filter((order) => order.side === 1);
-      const buyOrders = orders.filter((order) => order.side === 0);
-
-      console.log(buyOrders);
+      const sellOrders = await getSellOrders.data.orders;
+      const hasOffers = await getHasOffers.data.orders;
 
       dispatch({
         type: 'GET_USER_ASSETS_ORDERS',
         sellOrders,
-        buyOrders,
+        hasOffers,
       });
     } catch (error) {
       console.log(error.message);
     }
   },
-  removeData: (type) => (dispatch) => {
+  removeOrderAsset: () => (dispatch) => {
     dispatch({
-      type,
+      type: 'REMOVE_ORDER_ASSETS',
     });
   },
 };
@@ -83,5 +80,5 @@ export const {
   getUserAssets,
   getUserAssetsOrders,
   getAssets,
-  removeData,
+  removeOrderAsset,
 } = actions;

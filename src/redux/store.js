@@ -12,11 +12,10 @@ export const initialState = {
     userAssets: [],
     assetsOrders: {
       sellOrders: [],
-      buyOrders: [],
+      hasOffers: [],
     },
     userData: {
       totalAssetsCount: 0,
-      collectionNames: [],
     },
     collectionNames: [],
   },
