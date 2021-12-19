@@ -1,12 +1,22 @@
 import { RestartAlt } from '@mui/icons-material';
-import { Autocomplete, Grid, IconButton, TextField } from '@mui/material';
+import {
+  Autocomplete,
+  Grid,
+  Paper,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { makeStyles } from '@mui/styles';
+import { Box } from '@mui/system';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { useEffect, useState } from 'react';
 import { filterDuplicateObjects, formatEth } from '../utils';
+import { BarChart } from './Chart';
 const useStyles = makeStyles({
   root: {
     marginBottom: '15px',
-    width: '100%',
   },
   button: {
     height: '55px',
@@ -29,6 +39,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   const [eventType, setEventType] = useState('');
   const [sort, setSort] = useState('');
   const [search, setSearch] = useState('');
+  const [tab, setTab] = useState('1');
 
   const hasOffers = (array) =>
     array.map((x) => x?.hasOfferOrders?.length && x).filter(Boolean);
@@ -39,9 +50,9 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   const searchResults = (array) => {
     const result = array.filter(
       (asset) =>
-        asset.token_id.includes(search) ||
-        asset.collection.name.includes(search) ||
-        asset.owner.user.username.includes(search)
+        asset.token_id.toLowerCase().includes(search.toLowerCase()) ||
+        asset.collection.name.toLowerCase().includes(search.toLowerCase()) ||
+        asset.owner.user.username.toLowerCase().includes(search.toLowerCase())
     );
     return result;
   };
@@ -204,101 +215,126 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
     setSort(value);
   };
 
-  const resetFilter = () => {
-    setSearch('');
-    setSelectedCollection('');
-    setEventType('');
-    setSort('');
+  const handleTabChange = (event, newValue) => {
+    setTab(newValue);
   };
 
+  const tabsValue = [
+    { label: 'Details', value: '' },
+    {
+      label: 'Chart',
+      value: (
+        <Box sx={{ maxWidth: '800px', margin: '0 auto 30px' }}>
+          <BarChart />
+        </Box>
+      ),
+    },
+  ];
+
   return (
-    <Grid container spacing={2} alignItems='center' className={classes.root}>
-      <Grid item xs={12} md={6} lg={4}>
-        <TextField
-          type='search'
-          className={classes.textField}
-          size='small'
-          placeholder={collectionNames ? 'Search' : 'Loading...'}
-          fullWidth
-          onChange={handleSearch}
-        />
-      </Grid>
-      <Grid item xs={12} md={6} lg={2.5}>
-        <Autocomplete
-          freeSolo
-          fullWidth
-          disabled={!collectionNames}
-          className={classes.textField}
-          inputValue={selectedCollection}
-          onInputChange={handleCollectionChange}
-          options={['All', ...collectionNames]}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              size='small'
-              placeholder={collectionNames ? 'Collection' : 'Loading...'}
-              InputProps={{
-                ...params.InputProps,
-                type: 'text',
-              }}
+    <Box
+      sx={{
+        my: 4,
+        width: '100%',
+      }}
+    >
+      <TabContext value={tab}>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <TabList onChange={handleTabChange} aria-label='lab API tabs example'>
+            <Tab
+              label={tabsValue[0].label}
+              value='1'
+              sx={{ fontSize: '12px' }}
             />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6} lg={2.5}>
-        <Autocomplete
-          freeSolo
-          fullWidth
-          disabled={!collectionNames}
-          className={classes.textField}
-          inputValue={eventType}
-          onInputChange={handleEventTypeChange}
-          options={eventOptions}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              size='small'
-              placeholder={collectionNames ? 'Filter by' : 'Loading...'}
-              InputProps={{
-                ...params.InputProps,
-                type: 'text',
-              }}
+            <Tab
+              label={tabsValue[1].label}
+              value='2'
+              sx={{ fontSize: '12px' }}
             />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6} lg={3}>
-        <Grid container spacing={1} alignItems='center'>
-          <Grid item xs={11}>
-            <Autocomplete
-              freeSolo
-              fullWidth
-              disabled={!collectionNames}
-              className={classes.textField}
-              inputValue={sort}
-              onInputChange={handleSortingChange}
-              options={sortOptions}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  size='small'
-                  placeholder={collectionNames ? 'Sort by' : 'Loading...'}
-                  InputProps={{
-                    ...params.InputProps,
-                    type: 'text',
-                  }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={1} alignContent='right'>
-            <IconButton onClick={resetFilter}>
-              <RestartAlt sx={{ fontSize: '30px' }} color='light' />
-            </IconButton>
-          </Grid>
+          </TabList>
+        </Box>
+        <TabPanel value='1'>{tabsValue[0].value}</TabPanel>
+        <TabPanel value='2'>{tabsValue[1].value}</TabPanel>
+      </TabContext>
+      <Grid container spacing={2} alignItems='center' className={classes.root}>
+        <Grid item xs={12} md={4} lg={3}>
+          <TextField
+            type='search'
+            className={classes.textField}
+            size='small'
+            placeholder={collectionNames ? 'Search' : 'Loading...'}
+            fullWidth
+            onChange={handleSearch}
+          />
+        </Grid>
+        <Grid item xs={12} md={4} lg={3}>
+          <Autocomplete
+            freeSolo
+            fullWidth
+            disabled={!collectionNames}
+            className={classes.textField}
+            inputValue={selectedCollection}
+            onInputChange={handleCollectionChange}
+            options={['All', ...collectionNames]}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size='small'
+                placeholder={collectionNames ? 'Collection' : 'Loading...'}
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'text',
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={4} lg={3}>
+          <Autocomplete
+            freeSolo
+            fullWidth
+            disabled={!collectionNames}
+            className={classes.textField}
+            inputValue={eventType}
+            onInputChange={handleEventTypeChange}
+            options={eventOptions}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size='small'
+                placeholder={collectionNames ? 'Filter by' : 'Loading...'}
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'text',
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={4} lg={3}>
+          <Autocomplete
+            freeSolo
+            fullWidth
+            disabled={!collectionNames}
+            className={classes.textField}
+            inputValue={sort}
+            onInputChange={handleSortingChange}
+            options={sortOptions}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size='small'
+                placeholder={collectionNames ? 'Sort by' : 'Loading...'}
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'text',
+                }}
+              />
+            )}
+          />
         </Grid>
       </Grid>
-    </Grid>
+    </Box>
   );
 };
 

@@ -8,11 +8,12 @@ const Loading = () => {
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
+      marginTop: '20px',
     },
     loading: {
       color: 'rgba(0,0,0, .8)',
-      height: '15px',
-      width: '15px',
+      height: '10px !important',
+      width: '10px !important',
     },
   };
   return (

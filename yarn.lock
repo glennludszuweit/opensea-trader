@@ -1874,6 +1874,19 @@
     prop-types "^15.7.2"
     react-is "^17.0.2"
 
+"@mui/base@5.0.0-alpha.60":
+  version "5.0.0-alpha.60"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-alpha.60.tgz#48408a3f25ef92d861ea9617c5366cdd2b4a0bdd"
+  integrity sha512-J4cQoeqNFMaY6fgEJsT7meaLdYilA4R8wA53us3BT5NBP4puMeJLPK4rVSmpTsB8hf4Iyq+fosKzkcYRiKTctA==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@emotion/is-prop-valid" "^1.1.1"
+    "@mui/utils" "^5.2.3"
+    "@popperjs/core" "^2.4.4"
+    clsx "^1.1.1"
+    prop-types "^15.7.2"
+    react-is "^17.0.2"
+
 "@mui/icons-material@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@mui/icons-material/-/icons-material-5.2.0.tgz#6c6135bb2d7891e29d6f9419df402b82dd663517"
@@ -1881,19 +1894,19 @@
   dependencies:
     "@babel/runtime" "^7.16.3"
 
-"@mui/lab@^5.0.0-alpha.58":
-  version "5.0.0-alpha.58"
-  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-5.0.0-alpha.58.tgz#47c3b2976df066119fa040131a63139677ba5a66"
-  integrity sha512-Vn3bWlID2SgCb7KX3d29uSLWv3JDEHJ+QiApnaPuUqqymwHARbQUk+b2h6wfQCz/WqaR0MtmsRwA6OrrLsL3Eg==
+"@mui/lab@^5.0.0-alpha.60":
+  version "5.0.0-alpha.60"
+  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-5.0.0-alpha.60.tgz#139d8f09a3f55db3340e7e99463578c955c08f4c"
+  integrity sha512-d41Ks+rY2OJSGffVLj3nZiJwAMmAzoOoKv5FZIM3LFSiBOudihtwDbed3VcWYGZd/hdWTAfM0HE8AB0hoE7GAg==
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@date-io/date-fns" "^2.11.0"
     "@date-io/dayjs" "^2.11.0"
     "@date-io/luxon" "^2.11.1"
     "@date-io/moment" "^2.11.0"
-    "@mui/base" "5.0.0-alpha.58"
-    "@mui/system" "^5.2.2"
-    "@mui/utils" "^5.2.2"
+    "@mui/base" "5.0.0-alpha.60"
+    "@mui/system" "^5.2.4"
+    "@mui/utils" "^5.2.3"
     clsx "^1.1.1"
     prop-types "^15.7.2"
     react-is "^17.0.2"
@@ -1927,10 +1940,28 @@
     "@mui/utils" "^5.2.2"
     prop-types "^15.7.2"
 
+"@mui/private-theming@^5.2.3":
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/@mui/private-theming/-/private-theming-5.2.3.tgz#6d4e7d8309adc932b444fdd091caec339c430be4"
+  integrity sha512-Lc1Cmu8lSsYZiXADi9PBb17Ho82ZbseHQujUFAcp6bCJ5x/d+87JYCIpCBMagPu/isRlFCwbziuXPmz7WOzJPQ==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@mui/utils" "^5.2.3"
+    prop-types "^15.7.2"
+
 "@mui/styled-engine@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@mui/styled-engine/-/styled-engine-5.2.0.tgz#5c97e2b1b6c4c2d9991f07517ed862972d362b85"
   integrity sha512-NZ4pWYQcM5wreUfiXRd7IMFRF+Nq1vMzsIdXtXNjgctJTKHunrofasoBqv+cqevO+hqT75ezSbNHyaXzOXp6Mg==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@emotion/cache" "^11.6.0"
+    prop-types "^15.7.2"
+
+"@mui/styled-engine@^5.2.4":
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/@mui/styled-engine/-/styled-engine-5.2.4.tgz#a6543a47a69c26d90dee8d661660ee7b8af23d3c"
+  integrity sha512-tlilkVsAR+MeWIPILzj1uGjiy5tKONZgblXY49LECUNF7u7aTDszqmv0hRG+1IAZjNts+ox8XAlldPNfj+OKvA==
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@emotion/cache" "^11.6.0"
@@ -1973,6 +2004,20 @@
     csstype "^3.0.10"
     prop-types "^15.7.2"
 
+"@mui/system@^5.2.4":
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/@mui/system/-/system-5.2.4.tgz#2bb30f1c5e39088959af562a18ce9c5313d87d83"
+  integrity sha512-08WrDLzmY0/ag5wSzT0Qf2DkuPHdqkWbDUOIVs0VIkaq8tRH+EtnnLxuqyf8WLcytJZIcKcoLQDLWqbFivZ9lA==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@mui/private-theming" "^5.2.3"
+    "@mui/styled-engine" "^5.2.4"
+    "@mui/types" "^7.1.0"
+    "@mui/utils" "^5.2.3"
+    clsx "^1.1.1"
+    csstype "^3.0.10"
+    prop-types "^15.7.2"
+
 "@mui/types@^7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@mui/types/-/types-7.1.0.tgz#5ed928c5a41cfbf9a4be82ea3bbdc47bcc9610d5"
@@ -1982,6 +2027,17 @@
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.2.2.tgz#972aab7d2564e77c06e0c3c11e7b1aec6e37c927"
   integrity sha512-0u9ImUfpCfTxmvQTfUzTSS+jKWMX15MBZeZCRQZ0f7o9Yi8BlrLj33lMx0mFBkUSYdTXnqL4yfOn7RBzV01HMQ==
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+    "@types/prop-types" "^15.7.4"
+    "@types/react-is" "^16.7.1 || ^17.0.0"
+    prop-types "^15.7.2"
+    react-is "^17.0.2"
+
+"@mui/utils@^5.2.3":
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.2.3.tgz#994f3a500679804483732596fcfa531e59c56445"
+  integrity sha512-sQujlajIS0zQKcGIS6tZR0L1R+ib26B6UtuEn+cZqwKHsPo3feuS+SkdscYBdcCdMbrZs4gj8WIJHl2z6tbSzQ==
   dependencies:
     "@babel/runtime" "^7.16.3"
     "@types/prop-types" "^15.7.4"
@@ -4631,6 +4687,11 @@ char-regex@^1.0.2:
   resolved "https://registry.yarnpkg.com/char-regex/-/char-regex-1.0.2.tgz#d744358226217f981ed58f479b1d6bcc29545dcf"
   integrity sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==
 
+chart.js@^3.6.2:
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.6.2.tgz#47342c551f688ffdda2cd53b534cb7e461ecec33"
+  integrity sha512-Xz7f/fgtVltfQYWq0zL1Xbv7N2inpG+B54p3D5FSvpCdy3sM+oZhbqa42eNuYXltaVvajgX5UpKCU2GeeJIgxg==
+
 check-types@^11.1.1:
   version "11.1.2"
   resolved "https://registry.yarnpkg.com/check-types/-/check-types-11.1.2.tgz#86a7c12bf5539f6324eb0e70ca8896c0e38f3e2f"
@@ -6962,6 +7023,11 @@ fake-merkle-patricia-tree@^1.0.1:
   integrity sha1-S4w6z7Ugr635hgsfFM2M40As3dM=
   dependencies:
     checkpoint-store "^1.1.0"
+
+faker@^5.5.3:
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-5.5.3.tgz#c57974ee484431b25205c2c8dc09fda861e51e0e"
+  integrity sha512-wLTv2a28wjUyWkbnX7u/ABZBkUkIF2fCd73V6P2oFqEGEktDfzWx4UxrSqtPRw0xPRAcjeAOIiJWqZm3pP4u3g==
 
 fast-deep-equal@^3.1.1:
   version "3.1.3"
@@ -12010,7 +12076,7 @@ prompts@2.4.0, prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -12215,6 +12281,11 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
+react-chartjs-2@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-4.0.0.tgz#a79919c9efe5381b8cb5abfd0ac7a56c9736cdb8"
+  integrity sha512-0kx41EVO6wIoeU6zvdwovX9kKcdrs7O62DGTSNmwAXZeLGJ3U+n4XijO1kxcMmAi4I6PQJWGD5oRwxVixHSp6g==
+
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-11.0.4.tgz#a7ccb60257a1ca2e0efe7a83e38e6700d17aa37a"
@@ -12265,6 +12336,13 @@ react-infinite-scroll-component@^6.1.0:
   integrity sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==
   dependencies:
     throttle-debounce "^2.1.0"
+
+react-infinite-scroller@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/react-infinite-scroller/-/react-infinite-scroller-1.2.4.tgz#f67eaec4940a4ce6417bebdd6e3433bfc38826e9"
+  integrity sha512-/oOa0QhZjXPqaD6sictN2edFMsd3kkMiE19Vcz5JDgHpzEJVqYcmq+V3mkwO88087kvKGe1URNksHEOt839Ubw==
+  dependencies:
+    prop-types "^15.5.8"
 
 react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"

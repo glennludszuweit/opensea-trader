@@ -1,61 +1,73 @@
 import { styled } from '@mui/material/styles';
 import MuiAppBar from '@mui/material/AppBar';
-import { Toolbar, Typography, IconButton } from '@mui/material/';
-import MenuIcon from '@mui/icons-material/Menu';
-import Connect from './Connect';
+import { AppBar, Toolbar, IconButton, Grid } from '@mui/material/';
+import Search from './Search';
+import { AccountCircleTwoTone, FilterList, Menu } from '@mui/icons-material';
 
-const drawerWidth = 240;
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'openSideNav',
-})(({ theme, openSideNav }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(openSideNav && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Nav = ({ page, openSideNav, toggleSideNav, account, setAccount }) => {
+const Nav = ({
+  openSideNav,
+  setOpenSideNav,
+  setSearchResults,
+  searchResults,
+  setSearchIndex,
+  setSearchOffset,
+}) => {
   return (
-    <AppBar position='absolute' openSideNav={openSideNav}>
+    <AppBar position='fixed' openSideNav={openSideNav}>
       <Toolbar
         sx={{
           pr: '24px', // keep right padding when drawer closed
         }}
       >
-        <IconButton
-          edge='start'
-          color='inherit'
-          aria-label='openSideNav drawer'
-          onClick={toggleSideNav}
+        <Grid
+          spacing={2}
+          container
           sx={{
-            marginRight: '36px',
-            ...(openSideNav && { display: 'none' }),
+            width: '100%',
+            alignItems: 'center',
           }}
         >
-          <MenuIcon />
-        </IconButton>
-        <Typography
-          component='h1'
-          variant='h6'
-          color='inherit'
-          noWrap
-          sx={{ flexGrow: 1 }}
-        >
-          {!page ? 'Dashboard' : page}
-        </Typography>
-        <IconButton color='inherit'>
-          <Connect account={account} setAccount={setAccount} />
-        </IconButton>
+          <Grid item xs={1} md={2} lg={3}>
+            <IconButton
+              color='inherit'
+              onClick={() => {
+                setOpenSideNav({
+                  left: !openSideNav.left,
+                  right: false,
+                });
+              }}
+              sx={{
+                ...(openSideNav.left && { transform: 'scale(1.1)' }),
+              }}
+            >
+              <Menu />
+            </IconButton>
+          </Grid>
+          <Grid item xs={10} md={8} lg={6}>
+            <Search
+              setSearchResults={setSearchResults}
+              searchResults={searchResults}
+              setSearchIndex={setSearchIndex}
+              setSearchOffset={setSearchOffset}
+            />
+          </Grid>
+          <Grid item xs={1} md={2} lg={3} sx={{ textAlign: 'right' }}>
+            <IconButton
+              color='inherit'
+              onClick={() => {
+                setOpenSideNav({
+                  left: false,
+                  right: !openSideNav.right,
+                });
+              }}
+              sx={{
+                ...(openSideNav.right && { transform: 'scale(1.1)' }),
+              }}
+            >
+              <AccountCircleTwoTone />
+            </IconButton>
+          </Grid>
+        </Grid>
       </Toolbar>
     </AppBar>
   );

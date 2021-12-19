@@ -15,6 +15,7 @@ const Connect = ({ account, setAccount }) => {
 
   return (
     <Button
+      sx={{ borderRadius: '0 !important', py: 1, mx: 0 }}
       variant='contained'
       color='secondary'
       onClick={handleConnect}

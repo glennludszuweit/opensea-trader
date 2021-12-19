@@ -13,6 +13,24 @@ const api = {
   getAsset: (tokenAddress, id) => {
     return axios.get(`${API_BASE_URI}/asset/${tokenAddress}/${id}`, options);
   },
+  getAssets: (tokenAddress, offset, limit) => {
+    return axios.get(
+      `${API_BASE_URI}/assets?asset_contract_address=${tokenAddress}&offset=${offset}&limit=${limit}&order_by=sale_date`,
+      options
+    );
+  },
+  getFeaturedCollection: (collection) => {
+    return axios.get(`${API_BASE_URI}/asset_contract/${collection}`, options);
+  },
+  getCollectionStats: (slug) => {
+    return axios.get(`${API_BASE_URI}/collection/${slug}`, options);
+  },
+  getAssetsOrders: (tokenAddress, tokenId) => {
+    return axios.get(
+      `${ORDERS_API_URI}/orders?asset_contract_address=${tokenAddress}&token_id=${tokenId}&bundled=false&include_bundled=false&limit=5&offset=0&order_by=created_date&order_direction=asc`,
+      orderOptions
+    );
+  },
   getUserData: (account, offset, limit) => {
     return axios.get(
       `${API_BASE_URI}/collections?asset_owner=${account}&offset=${offset}&limit=${limit}`,
@@ -22,12 +40,6 @@ const api = {
   getUserAssets: (account, offset, limit) => {
     return axios.get(
       `${API_BASE_URI}/assets?owner=${account}&offset=${offset}&limit=${limit}`,
-      options
-    );
-  },
-  getUserEvents: (account, offset, limit) => {
-    return axios.get(
-      `${API_BASE_URI}/events?account_address=${account}&event_type=transfer&only_opensea=false&offset=${offset}&limit=${limit}`,
       options
     );
   },

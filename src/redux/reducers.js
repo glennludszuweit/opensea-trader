@@ -13,12 +13,36 @@ const meregeDuplicateOrders = (array) => {
 };
 
 const reducers = {
-  assets: (state = initialState.assets, action) => {
+  collections: (state = initialState.collections, action) => {
     switch (action.type) {
-      case 'GET_ASSETS':
+      case 'GET_COLLECTION_ASSETS':
+        const searchedAssets = filterDuplicateObjects([
+          ...state.searched.assets,
+          ...action.searchedAssets,
+        ]);
         return {
-          data: action.data,
+          ...state,
+          searched: {
+            collection: action.searchedCollection,
+            assets: searchedAssets,
+          },
+          featured: {
+            collection: action.featuredCollection,
+          },
         };
+
+      case 'REMOVE_COLLECTION_ASSETS':
+        return {
+          ...state,
+          searched: initialState.collections.searched,
+        };
+
+      case 'REMOVE_FEATURED_ASSETS':
+        return {
+          ...state,
+          featured: initialState.collections.featured,
+        };
+
       default:
         return state;
     }
@@ -31,6 +55,7 @@ const reducers = {
           userData: {
             totalAssetsCount: action.totalAssetsCount,
             collectionNames: action.collectionNames,
+            collectionContracts: action.collectionContracts,
           },
         };
 
@@ -41,10 +66,10 @@ const reducers = {
         ]);
 
         const mergeWithOrders = mergeAssetsArr.map((asset) => {
-          const hasSellOrders = state.assetsOrders.sellOrders.filter(
+          const hasSellOrders = state.assetsOrders?.sellOrders.filter(
             (order) => order.asset.id === asset.id
           );
-          const hasOfferOrders = state.assetsOrders.hasOffers.filter(
+          const hasOfferOrders = state.assetsOrders?.hasOffers.filter(
             (order) => order.asset.id === asset.id
           );
           return { ...asset, hasSellOrders, hasOfferOrders };
@@ -95,6 +120,18 @@ const reducers = {
           assetsOrders: {},
         };
 
+      case 'ADD_TO_WATCHLIST':
+        return {
+          ...state,
+          watchLists: [...state.watchLists, action.watchListAsset],
+        };
+
+      case 'REMOVE_FROM_WATCHLIST':
+        return {
+          ...state,
+          watchLists: action.watchListAssets,
+        };
+
       default:
         return state;
     }
@@ -112,4 +149,4 @@ const reducers = {
   },
 };
 
-export const { assets, user, error } = reducers;
+export const { user, collections, error } = reducers;

@@ -1,23 +1,33 @@
 import thunk from 'redux-thunk';
 import { combineReducers } from 'redux';
-import { assets, user, error } from './reducers';
+import { assets, user, collections, error } from './reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { getLS, setLS } from '../utils';
 
 export const initialState = {
-  assets: {},
+  collections: {
+    searched: {
+      collection: {},
+      assets: [],
+    },
+    featured: {
+      collection: {},
+      assets: [],
+    },
+  },
   user: {
     web3Address: '',
-    count: '',
     userAssets: [],
+    watchLists: [],
     assetsOrders: {
       sellOrders: [],
       hasOffers: [],
     },
     userData: {
       totalAssetsCount: 0,
+      collectionNames: [],
+      collectionContracts: [],
     },
-    collectionNames: [],
   },
   error: {
     status: false,
@@ -27,8 +37,8 @@ export const initialState = {
 };
 
 const reducers = combineReducers({
-  assets,
   user,
+  collections,
   error,
 });
 const persistedState = getLS() || initialState;
@@ -41,8 +51,8 @@ const store = createStore(
 
 store.subscribe(() => {
   setLS({
-    assets: store.getState().assets,
     user: store.getState().user,
+    collections: store.getState().collections,
     error: store.getState().error,
   });
 });
