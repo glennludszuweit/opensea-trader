@@ -1,18 +1,15 @@
 import api from './api';
 
 const actions = {
-  getAsset: (tokenAddress, tokenIds) => async (dispatch) => {
+  getAsset: (tokenAddress, tokenId) => async (dispatch) => {
     try {
-      const response = await Promise.all(
-        tokenIds.filter(Boolean).map((id) => api.getAsset(tokenAddress, id))
-      );
-      const data = response.map(async (res) => await res.data);
+      const { data } = await api.getAsset(tokenAddress, tokenId);
 
-      // console.log(data);
-      // dispatch({
-      //   type: 'GET_ASSET',
-      //   data,
-      // });
+      console.log(data);
+      dispatch({
+        type: 'GET_ASSET',
+        searchedAsset: data,
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -26,8 +23,6 @@ const actions = {
       const collection = await data.assets[0].collection;
       const collectionData = await api.getCollectionStats(collection.slug);
       const searchedCollection = await collectionData.data.collection;
-
-      console.log(searchedCollection);
 
       dispatch({
         type: 'GET_COLLECTION_ASSETS',
@@ -68,6 +63,7 @@ const actions = {
 
       dispatch({
         type: 'GET_USER_DATA',
+        userCollections: data,
         collectionContracts,
         totalAssetsCount,
         collectionNames,

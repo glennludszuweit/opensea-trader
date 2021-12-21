@@ -7,7 +7,7 @@ import {
   ListItemText,
   IconButton,
 } from '@mui/material/';
-import { Close, ExpandMore, FilterListSharp } from '@mui/icons-material';
+import { Close, ExpandMore } from '@mui/icons-material';
 import Loading from './Loading';
 import { Box } from '@mui/system';
 
@@ -41,6 +41,7 @@ const Traits = ({ searchedCollection }) => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}
+              key={value}
             >
               <ListItemText primary={value.toUpperCase()} />
               <ListItemText

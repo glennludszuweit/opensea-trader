@@ -15,6 +15,15 @@ const meregeDuplicateOrders = (array) => {
 const reducers = {
   collections: (state = initialState.collections, action) => {
     switch (action.type) {
+      case 'GET_ASSET':
+        return {
+          ...state,
+          searched: {
+            ...state.searched,
+            asset: action.searchedAsset,
+          },
+        };
+
       case 'GET_COLLECTION_ASSETS':
         const searchedAssets = filterDuplicateObjects([
           ...state.searched.assets,
@@ -56,6 +65,7 @@ const reducers = {
             totalAssetsCount: action.totalAssetsCount,
             collectionNames: action.collectionNames,
             collectionContracts: action.collectionContracts,
+            userCollections: action.userCollections,
           },
         };
 

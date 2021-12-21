@@ -1,8 +1,6 @@
-import { styled } from '@mui/material/styles';
-import MuiAppBar from '@mui/material/AppBar';
 import { AppBar, Toolbar, IconButton, Grid } from '@mui/material/';
 import Search from './Search';
-import { AccountCircleTwoTone, FilterList, Menu } from '@mui/icons-material';
+import { AccountCircleTwoTone, Menu } from '@mui/icons-material';
 
 const Nav = ({
   openSideNav,
@@ -11,9 +9,10 @@ const Nav = ({
   searchResults,
   setSearchIndex,
   setSearchOffset,
+  searchedCollection,
 }) => {
   return (
-    <AppBar position='fixed' openSideNav={openSideNav}>
+    <AppBar position='fixed'>
       <Toolbar
         sx={{
           pr: '24px', // keep right padding when drawer closed
@@ -49,6 +48,7 @@ const Nav = ({
               searchResults={searchResults}
               setSearchIndex={setSearchIndex}
               setSearchOffset={setSearchOffset}
+              searchedCollection={searchedCollection}
             />
           </Grid>
           <Grid item xs={1} md={2} lg={3} sx={{ textAlign: 'right' }}>

@@ -48,7 +48,7 @@ const RightSideNav = ({ openSideNav, toggleMenu }) => {
   return (
     <Paper variant='outlined' sx={styles.root}>
       {menuList.map((item) => (
-        <Link to={item.url} onClick={toggleMenu}>
+        <Link to={item.url} onClick={toggleMenu} key={item.name}>
           <ListItem
             button
             sx={{

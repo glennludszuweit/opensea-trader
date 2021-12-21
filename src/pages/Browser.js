@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import api from '../redux/api';
 import {
   Card,
   CardContent,
@@ -73,10 +74,17 @@ const Browser = ({
   setSearchOffset,
   firstEvent,
   toggleSearch,
+  assetSearch,
+  setAssetSearch,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [limit, setLimit] = useState(20);
+  const [displayData, setDisplayData] = useState([]);
+
+  useEffect(() => {
+    searchedAssets.length && setDisplayData(searchedAssets);
+  }, []);
 
   useEffect(() => {
     if (loading) {
@@ -95,6 +103,23 @@ const Browser = ({
     }
   }, [loading, searchOffset, searchIndex, searchResults]);
 
+  if (!searchedAssets || !searchedAssets.length) {
+    return <Loading />;
+  }
+
+  console.log(assetSearch);
+  const handleAssetSearch = async () => {
+    try {
+      const { data } = await api.getAsset(
+        searchedCollection.primary_asset_contracts[0].address,
+        assetSearch
+      );
+      setDisplayData([data]);
+    } catch (error) {
+      setDisplayData(searchedAssets);
+    }
+  };
+
   const filterProps = {
     collectionNames,
     totalAssetsCount,
@@ -102,11 +127,10 @@ const Browser = ({
     toggleSearch,
     account,
     loading,
+    assetSearch,
+    setAssetSearch,
+    handleAssetSearch,
   };
-
-  if (!searchedAssets || !searchedAssets.length) {
-    return <Loading />;
-  }
 
   return (
     searchedAssets.length && (
@@ -123,7 +147,7 @@ const Browser = ({
           <CollectionDetails {...filterProps} />
         </Box>
         <Grid container spacing={1}>
-          {searchedAssets.map((asset, index) => (
+          {displayData.map((asset, index) => (
             <Grid
               item
               xs={12}

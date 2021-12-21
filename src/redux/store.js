@@ -1,6 +1,6 @@
 import thunk from 'redux-thunk';
 import { combineReducers } from 'redux';
-import { assets, user, collections, error } from './reducers';
+import { user, collections, error } from './reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { getLS, setLS } from '../utils';
 
@@ -9,6 +9,7 @@ export const initialState = {
     searched: {
       collection: {},
       assets: [],
+      asset: {},
     },
     featured: {
       collection: {},
@@ -25,6 +26,7 @@ export const initialState = {
     },
     userData: {
       totalAssetsCount: 0,
+      userCollections: [],
       collectionNames: [],
       collectionContracts: [],
     },

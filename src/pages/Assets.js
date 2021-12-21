@@ -1,17 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardMedia,
-  Grid,
-  IconButton,
-  ImageList,
-  ImageListItem,
-  Typography,
-} from '@mui/material';
-import { PlaylistAdd } from '@mui/icons-material';
+import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import Loading from '../components/Loading';
@@ -24,6 +13,12 @@ import Filter from '../components/Filter';
 import { formatEth } from '../utils';
 
 const useStyles = makeStyles({
+  wrapper: {
+    width: '100% !important',
+    height: '100vh',
+    overflow: 'auto',
+    margin: '0 !important',
+  },
   root: {
     width: '100%',
     display: 'flex',
@@ -97,14 +92,7 @@ const Assets = ({
   }
 
   return (
-    <Box
-      style={{
-        width: '100% !important',
-        height: '100vh',
-        overflow: 'auto',
-        margin: '0 !important',
-      }}
-    >
+    <Box className={classes.wrapper}>
       <Box className={classes.root}>
         <Filter {...filterProps} />
       </Box>

@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
 import { Paper, ListItem, ListItemIcon, ListItemText } from '@mui/material/';
 import {
   LocalOffer,
@@ -9,6 +8,7 @@ import {
   Collections,
   CollectionsBookmark,
   TravelExplore,
+  Dashboard,
 } from '@mui/icons-material';
 
 const LeftSideNav = ({ openSideNav, toggleMenu }) => {
@@ -37,7 +37,7 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
     },
   };
   const menuList = [
-    { url: '/', name: 'Browse', icon: <TravelExplore /> },
+    { url: '/', name: 'Dashboard', icon: <Dashboard /> },
     { url: '/assets', name: 'Assets', icon: <Collections /> },
     { url: '/watchlist', name: 'Watchlist', icon: <CollectionsBookmark /> },
     { url: '/offers', name: 'Send Offers', icon: <LocalOffer /> },
@@ -49,7 +49,7 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
   return (
     <Paper variant='outlined' sx={styles.root}>
       {menuList.map((item) => (
-        <Link to={item.url} onClick={toggleMenu}>
+        <Link to={item.url} onClick={toggleMenu} key={item.name}>
           <ListItem
             button
             sx={{

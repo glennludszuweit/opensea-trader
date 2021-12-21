@@ -1,13 +1,4 @@
-import { RestartAlt } from '@mui/icons-material';
-import {
-  Autocomplete,
-  Grid,
-  Paper,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Grid, Tab, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import { TabContext, TabList, TabPanel } from '@mui/lab';

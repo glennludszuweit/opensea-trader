@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { getCollectionAssets, getUserData } from '../redux/actions';
+import { getAsset, getCollectionAssets, getUserData } from '../redux/actions';
 import {
   Paper,
   Container,
@@ -21,6 +21,7 @@ import Auction from './Auction';
 import Assets from './Assets';
 import Watchlist from './Watchlist';
 import Browser from './Browser';
+import Dashboard from './Dashboard';
 import SearchFilter from '../components/SearchFilter';
 
 const useStyles = makeStyles({
@@ -32,7 +33,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
   },
   container: {
-    margin: 'auto !important',
+    margin: '0 auto 2rem !important',
   },
   main: {
     padding: '0 1rem',
@@ -46,8 +47,14 @@ const Main = ({ seaport }) => {
   const dispatch = useDispatch();
   const web3Address = useSelector((state) => state.user.web3Address);
   const userAssets = useSelector((state) => state.user.userAssets);
+  const userCollections = useSelector(
+    (state) => state.user.userData.userCollections
+  );
   const searchedAssets = useSelector(
     (state) => state.collections.searched.assets
+  );
+  const searchedAsset = useSelector(
+    (state) => state.collections.searched.asset
   );
   const searchedCollection = useSelector(
     (state) => state.collections.searched.collection
@@ -76,6 +83,7 @@ const Main = ({ seaport }) => {
   const [openSearch, setOpenSearch] = useState(false);
   const [searchIndex, setSearchIndex] = useState(0);
   const [searchOffset, setSearchOffset] = useState(0);
+  const [assetSearch, setAssetSearch] = useState('');
 
   useEffect(() => {
     if (location.pathname !== '/') {
@@ -108,12 +116,23 @@ const Main = ({ seaport }) => {
     setOpenSearch(!openSearch);
   };
 
+  const handleAssetSearch = () => {
+    dispatch(
+      getAsset(
+        searchedCollection?.primary_asset_contracts[0]?.address,
+        assetSearch
+      )
+    );
+  };
+
   const commonStateProps = {
     web3Address,
     userAssets,
+    userCollections,
     collectionNames,
     totalAssetsCount,
     searchedAssets,
+    searchedAsset,
     searchedCollection,
     watchLists,
     account,
@@ -130,10 +149,13 @@ const Main = ({ seaport }) => {
     setSearchIndex,
     searchOffset,
     setSearchOffset,
+    assetSearch,
+    setAssetSearch,
     firstEvent,
     toggleMenu,
     openSearch,
     toggleSearch,
+    handleAssetSearch,
   };
 
   return (
@@ -151,6 +173,16 @@ const Main = ({ seaport }) => {
               <Route
                 exact
                 path='/'
+                element={<Dashboard {...commonStateProps} />}
+              />
+              <Route
+                exact
+                path='/:collectionSlug'
+                element={<Browser {...commonStateProps} />}
+              />
+              <Route
+                exact
+                path='/:collectionSlug/:assetId'
                 element={<Browser {...commonStateProps} />}
               />
               <Route

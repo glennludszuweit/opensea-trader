@@ -1,10 +1,10 @@
 import { LocationSearching } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Autocomplete, InputAdornment, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { top500Collections } from '../data';
-import { getCollectionAssets, removeCollectionAssets } from '../redux/actions';
+import { removeCollectionAssets } from '../redux/actions';
 
 const useStyles = makeStyles({
   textField: {
@@ -24,6 +24,7 @@ const useStyles = makeStyles({
 });
 
 const Search = ({
+  searchedCollection,
   setSearchResults,
   searchResults,
   setSearchIndex,
@@ -55,9 +56,13 @@ const Search = ({
       getOptionLabel={(option) => option.name}
       renderOption={({ key, ...props }, option) => {
         return (
-          <li {...props} key={option.contract}>
-            <Link to='/'>{option.name}</Link>
-          </li>
+          searchedCollection && (
+            <Link to={`/${searchedCollection.slug}`}>
+              <li {...props} key={option.contract}>
+                {option.name}
+              </li>
+            </Link>
+          )
         );
       }}
       renderInput={(params, option) => (
@@ -79,6 +84,7 @@ const Search = ({
             },
             endAdornment: (
               <InputAdornment
+                position='end'
                 sx={{ position: 'absolute', right: 8 }}
                 onClick={(e, v) => console.log(v)}
               >
