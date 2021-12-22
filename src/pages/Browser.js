@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import api from '../redux/api';
 import {
   Card,
   CardContent,
@@ -61,6 +60,7 @@ const useStyles = makeStyles({
 
 const Browser = ({
   account,
+  searchedAsset,
   searchedAssets,
   searchedCollection,
   collectionNames,
@@ -69,6 +69,7 @@ const Browser = ({
   loading,
   setLoading,
   searchResults,
+  limit,
   searchIndex,
   searchOffset,
   setSearchOffset,
@@ -76,15 +77,12 @@ const Browser = ({
   toggleSearch,
   assetSearch,
   setAssetSearch,
+  handleAssetSearch,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [limit, setLimit] = useState(20);
-  const [displayData, setDisplayData] = useState([]);
 
-  useEffect(() => {
-    searchedAssets.length && setDisplayData(searchedAssets);
-  }, []);
+  const [displayData, setDisplayData] = useState([]);
 
   useEffect(() => {
     if (loading) {
@@ -93,6 +91,7 @@ const Browser = ({
           getCollectionAssets(searchResults.contract, searchOffset, limit)
         );
         setSearchOffset(searchIndex * limit);
+        setDisplayData(searchedAssets);
       }
       setLoading(false);
     } else if (searchResults?.contract) {
@@ -100,35 +99,35 @@ const Browser = ({
         getCollectionAssets(searchResults.contract, searchOffset, limit)
       );
       setSearchOffset(searchIndex * limit);
+      setDisplayData(searchedAssets);
     }
   }, [loading, searchOffset, searchIndex, searchResults]);
 
-  if (!searchedAssets || !searchedAssets.length) {
+  useEffect(() => {
+    if (!searchedAsset || !searchedAsset.asset_contract) {
+      setDisplayData(searchedAssets);
+    } else {
+      setDisplayData([searchedAsset]);
+      setSearchOffset(searchIndex * limit);
+    }
+  }, [searchedAsset]);
+
+  if (!displayData || !displayData.length) {
     return <Loading />;
   }
-
-  console.log(assetSearch);
-  const handleAssetSearch = async () => {
-    try {
-      const { data } = await api.getAsset(
-        searchedCollection.primary_asset_contracts[0].address,
-        assetSearch
-      );
-      setDisplayData([data]);
-    } catch (error) {
-      setDisplayData(searchedAssets);
-    }
-  };
 
   const filterProps = {
     collectionNames,
     totalAssetsCount,
     searchedCollection,
+    searchedAsset,
     toggleSearch,
     account,
     loading,
     assetSearch,
     setAssetSearch,
+    handleAssetSearch,
+    searchedAsset,
     handleAssetSearch,
   };
 

@@ -22,7 +22,7 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
       ml: 0.5,
       zIndex: 5,
       width: 300,
-      position: 'absolute',
+      position: 'fixed',
       left: -5,
       top: `${openSideNav.left ? '64px' : '-1000px'}`,
       transition: 'all 1s ease',

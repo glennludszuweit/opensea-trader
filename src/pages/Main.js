@@ -43,7 +43,6 @@ const useStyles = makeStyles({
 
 const Main = ({ seaport }) => {
   const classes = useStyles();
-  const location = useLocation();
   const dispatch = useDispatch();
   const web3Address = useSelector((state) => state.user.web3Address);
   const userAssets = useSelector((state) => state.user.userAssets);
@@ -81,15 +80,12 @@ const Main = ({ seaport }) => {
     contract: '',
   });
   const [openSearch, setOpenSearch] = useState(false);
-  const [searchIndex, setSearchIndex] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [searchIndex, setSearchIndex] = useState(
+    +Math.abs(+searchedAssets.length / limit) + 1 || 1
+  );
   const [searchOffset, setSearchOffset] = useState(0);
   const [assetSearch, setAssetSearch] = useState('');
-
-  useEffect(() => {
-    if (location.pathname !== '/') {
-      setSearchResults({ name: '', contract: '' });
-    }
-  }, []);
 
   useEffect(() => {
     dispatch(getUserData(account, 0, 300));
@@ -98,8 +94,7 @@ const Main = ({ seaport }) => {
   const firstEvent = (e) => {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 50;
-    console.log(bottom && searchOffset - searchIndex <= searchedAssets.length);
-    if (bottom && searchOffset - searchIndex <= searchedAssets.length) {
+    if (bottom) {
       setSearchIndex(searchIndex + 1);
       setLoading(true);
     }
@@ -116,13 +111,8 @@ const Main = ({ seaport }) => {
     setOpenSearch(!openSearch);
   };
 
-  const handleAssetSearch = () => {
-    dispatch(
-      getAsset(
-        searchedCollection?.primary_asset_contracts[0]?.address,
-        assetSearch
-      )
-    );
+  const handleAssetSearch = (tokenAddress, tokenId) => {
+    dispatch(getAsset(tokenAddress, tokenId));
   };
 
   const commonStateProps = {
@@ -146,6 +136,7 @@ const Main = ({ seaport }) => {
     searchResults,
     setSearchResults,
     searchIndex,
+    limit,
     setSearchIndex,
     searchOffset,
     setSearchOffset,
@@ -176,22 +167,14 @@ const Main = ({ seaport }) => {
                 element={<Dashboard {...commonStateProps} />}
               />
               <Route
-                exact
-                path='/:collectionSlug'
+                path='/collection/:collectionSlug'
                 element={<Browser {...commonStateProps} />}
               />
               <Route
-                exact
-                path='/:collectionSlug/:assetId'
-                element={<Browser {...commonStateProps} />}
-              />
-              <Route
-                exact
                 path='/assets'
                 element={<Assets {...commonStateProps} />}
               />
               <Route
-                exact
                 path='/watchlist'
                 element={<Watchlist {...commonStateProps} />}
               />

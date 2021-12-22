@@ -1,5 +1,9 @@
-import { Link } from 'react-router-dom';
-import { FilterListSharp, TravelExplore } from '@mui/icons-material';
+import {
+  Close,
+  FilterListSharp,
+  RotateLeft,
+  TravelExplore,
+} from '@mui/icons-material';
 import {
   Grid,
   IconButton,
@@ -12,7 +16,7 @@ import {
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BarChart } from './Chart';
 
 const useStyles = makeStyles({
@@ -25,6 +29,7 @@ const useStyles = makeStyles({
 
 const CollectionDetails = ({
   searchedCollection,
+  searchedAsset,
   toggleSearch,
   assetSearch,
   setAssetSearch,
@@ -32,6 +37,12 @@ const CollectionDetails = ({
 }) => {
   const classes = useStyles();
   const [tab, setTab] = useState('1');
+  const [maxInput, setMaxInput] = useState(0);
+
+  useEffect(() => {
+    searchedCollection &&
+      setMaxInput(`${searchedCollection.stats.count}`.length);
+  }, [searchedCollection]);
 
   const detailTiles = [
     { name: 'Assets', value: searchedCollection.stats.count },
@@ -75,7 +86,7 @@ const CollectionDetails = ({
           />
           <Grid container spacing={0.5}>
             {detailTiles.map((el) => (
-              <Grid item xs={6}>
+              <Grid item xs={6} key={el.value}>
                 <Paper
                   variant='outlined'
                   sx={{
@@ -119,6 +130,7 @@ const CollectionDetails = ({
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
           <TabList onChange={handleTabChange} aria-label='lab API tabs example'>
             <Tab
+              key='0'
               label={tabValue[0].label}
               value='1'
               sx={{ fontSize: '12px' }}
@@ -142,26 +154,62 @@ const CollectionDetails = ({
         }}
       >
         <TextField
-          type='search'
           className={classes.textField}
-          value={assetSearch}
-          size='small'
           placeholder='Search ID'
           onChange={(e) => setAssetSearch(e.target.value)}
+          value={assetSearch}
           fullWidth
+          inputProps={{
+            maxLength: maxInput,
+          }}
           InputProps={{
+            disableUnderline: true,
             endAdornment: (
               <InputAdornment position='end'>
-                <Link
-                  to={
-                    searchedCollection.slug &&
-                    `/${searchedCollection.slug}/${assetSearch}`
-                  }
-                >
-                  <IconButton onClick={handleAssetSearch}>
-                    <TravelExplore />
+                {assetSearch.length ? (
+                  <IconButton
+                    sx={{
+                      mx: 2,
+                    }}
+                    onClick={() => {
+                      handleAssetSearch('0', '0');
+                      setTimeout(() => {
+                        setAssetSearch('');
+                      }, 500);
+                    }}
+                    color='primary'
+                  >
+                    <Close />
                   </IconButton>
-                </Link>
+                ) : searchedAsset?.asset_contract && !assetSearch.length ? (
+                  <IconButton
+                    sx={{
+                      mx: 2,
+                    }}
+                    onClick={() => {
+                      handleAssetSearch('0', '0');
+                      setTimeout(() => {
+                        setAssetSearch('');
+                      }, 500);
+                    }}
+                    color='primary'
+                  >
+                    <RotateLeft />
+                  </IconButton>
+                ) : null}
+
+                <IconButton
+                  onClick={() => {
+                    handleAssetSearch(
+                      searchedCollection?.primary_asset_contracts[0]?.address,
+                      assetSearch
+                    );
+                  }}
+                  disabled={!assetSearch.length}
+                  color='primary'
+                >
+                  <TravelExplore />
+                </IconButton>
               </InputAdornment>
             ),
           }}

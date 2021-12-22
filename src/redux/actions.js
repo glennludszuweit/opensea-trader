@@ -12,27 +12,32 @@ const actions = {
       });
     } catch (error) {
       console.log(error.message);
-    }
-  },
-  getCollectionAssets: (tokenAddress, offset, limit) => async (dispatch) => {
-    try {
-      const response = await api.getAssets(tokenAddress, offset, limit);
-      const data = await response.data;
-      const searchedAssets = await data.assets;
-
-      const collection = await data.assets[0].collection;
-      const collectionData = await api.getCollectionStats(collection.slug);
-      const searchedCollection = await collectionData.data.collection;
-
       dispatch({
-        type: 'GET_COLLECTION_ASSETS',
-        searchedAssets,
-        searchedCollection,
+        type: 'GET_ASSET',
+        searchedAsset: {},
       });
-    } catch (error) {
-      console.log(error.message);
     }
   },
+  getCollectionAssets:
+    (tokenAddress, offset, limit, tokenId) => async (dispatch) => {
+      try {
+        const response = await api.getAssets(tokenAddress, offset, limit);
+        const data = await response.data;
+        const searchedAssets = await data.assets;
+
+        const collection = await data.assets[0]?.collection;
+        const collectionData = await api.getCollectionStats(collection?.slug);
+        const searchedCollection = await collectionData.data.collection;
+
+        dispatch({
+          type: 'GET_COLLECTION_ASSETS',
+          searchedAssets,
+          searchedCollection,
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    },
   removeCollectionAssets: () => (dispatch) => {
     dispatch({
       type: 'REMOVE_COLLECTION_ASSETS',

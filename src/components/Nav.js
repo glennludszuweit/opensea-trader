@@ -11,6 +11,13 @@ const Nav = ({
   setSearchOffset,
   searchedCollection,
 }) => {
+  const searchProps = {
+    setSearchResults,
+    searchResults,
+    setSearchIndex,
+    setSearchOffset,
+    searchedCollection,
+  };
   return (
     <AppBar position='fixed'>
       <Toolbar
@@ -43,13 +50,7 @@ const Nav = ({
             </IconButton>
           </Grid>
           <Grid item xs={10} md={8} lg={6}>
-            <Search
-              setSearchResults={setSearchResults}
-              searchResults={searchResults}
-              setSearchIndex={setSearchIndex}
-              setSearchOffset={setSearchOffset}
-              searchedCollection={searchedCollection}
-            />
+            <Search {...searchProps} />
           </Grid>
           <Grid item xs={1} md={2} lg={3} sx={{ textAlign: 'right' }}>
             <IconButton

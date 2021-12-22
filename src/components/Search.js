@@ -1,6 +1,6 @@
-import { LocationSearching } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { LocationSearching } from '@mui/icons-material';
 import { Autocomplete, InputAdornment, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { top500Collections } from '../data';
@@ -56,13 +56,14 @@ const Search = ({
       getOptionLabel={(option) => option.name}
       renderOption={({ key, ...props }, option) => {
         return (
-          searchedCollection && (
-            <Link to={`/${searchedCollection.slug}`}>
-              <li {...props} key={option.contract}>
-                {option.name}
-              </li>
-            </Link>
-          )
+          <Link
+            to={`/collection/${option.name
+              .replace(/\s/g, '-')
+              .toLocaleLowerCase()}`}
+            key={option.contract}
+          >
+            <li {...props}>{option.name}</li>
+          </Link>
         );
       }}
       renderInput={(params, option) => (
