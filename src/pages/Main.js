@@ -80,39 +80,75 @@ const Main = ({ seaport }) => {
     contract: '',
   });
   const [openSearch, setOpenSearch] = useState(false);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(50);
   const [searchIndex, setSearchIndex] = useState(
-    +Math.abs(+searchedAssets.length / limit) + 1 || 1
+    +Math.abs(+searchedAssets.length / limit) || 1
   );
   const [searchOffset, setSearchOffset] = useState(0);
   const [assetSearch, setAssetSearch] = useState('');
+  const [traitsFilter, setTraitsFilter] = useState([]);
+  const [traitCounts, setTraitCounts] = useState([]);
+  const [traitCount, setTraitCount] = useState(0);
 
   useEffect(() => {
     dispatch(getUserData(account, 0, 300));
   }, []);
 
+  useEffect(() => {
+    setTraitCounts(() => [
+      ...new Set(
+        searchedAssets.map(
+          (x) =>
+            x.traits.filter((t) => `${t.value}`.toLowerCase() !== 'none').length
+        )
+      ),
+    ]);
+  }, [searchedCollection]);
+
   const firstEvent = (e) => {
     const bottom =
       e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 50;
-    if (bottom) {
-      setSearchIndex(searchIndex + 1);
+    console.log(bottom && searchOffset - searchIndex <= searchedAssets.length);
+    if (bottom && searchedAssets.length < searchedCollection?.stats?.count) {
       setLoading(true);
+
+      if (searchOffset - limit <= searchedAssets.length) {
+        setSearchIndex(searchIndex + 1);
+        setSearchOffset(searchIndex * limit);
+      }
+    } else {
+      setLoading(false);
     }
   };
+
+  const enableFilterResetBtn =
+    (searchedAsset?.asset_contract && !assetSearch.length) ||
+    traitCount ||
+    traitsFilter.length;
 
   const toggleMenu = () => {
     setOpenSideNav({
       left: false,
       right: false,
     });
+    // toggleSearch();
   };
 
-  const toggleSearch = (e) => {
+  const toggleSearch = () => {
     setOpenSearch(!openSearch);
+    // toggleMenu();
   };
 
   const handleAssetSearch = (tokenAddress, tokenId) => {
     dispatch(getAsset(tokenAddress, tokenId));
+  };
+
+  const removeFilters = () => {
+    setAssetSearch('');
+    setTraitCount(0);
+    setTraitsFilter([]);
+    // toggleSearch();
+    // toggleMenu();
   };
 
   const commonStateProps = {
@@ -144,9 +180,16 @@ const Main = ({ seaport }) => {
     setAssetSearch,
     firstEvent,
     toggleMenu,
+    enableFilterResetBtn,
     openSearch,
     toggleSearch,
+    removeFilters,
     handleAssetSearch,
+    traitsFilter,
+    setTraitsFilter,
+    traitCounts,
+    traitCount,
+    setTraitCount,
   };
 
   return (
@@ -176,7 +219,7 @@ const Main = ({ seaport }) => {
               />
               <Route
                 path='/watchlist'
-                element={<Watchlist {...commonStateProps} />}
+                element={<Assets {...commonStateProps} />}
               />
               {/* side nav 2nd row */}
               <Route

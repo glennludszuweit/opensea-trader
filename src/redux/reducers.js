@@ -76,10 +76,10 @@ const reducers = {
         ]);
 
         const mergeWithOrders = mergeAssetsArr.map((asset) => {
-          const hasSellOrders = state.assetsOrders?.sellOrders.filter(
+          const hasSellOrders = state.assetsOrders?.sell_orders.filter(
             (order) => order.asset.id === asset.id
           );
-          const hasOfferOrders = state.assetsOrders?.hasOffers.filter(
+          const hasOfferOrders = state.assetsOrders?.orders.filter(
             (order) => order.asset.id === asset.id
           );
           return { ...asset, hasSellOrders, hasOfferOrders };
@@ -108,19 +108,19 @@ const reducers = {
         };
 
       case 'GET_USER_ASSETS_ORDERS':
-        const sellOrders = filterDuplicateObjects([
-          ...state.assetsOrders.sellOrders,
-          ...action.sellOrders,
+        const sell_orders = filterDuplicateObjects([
+          ...state.assetsOrders.sell_orders,
+          ...action.sell_orders,
         ]);
-        const hasOffers = filterDuplicateObjects([
-          ...state.assetsOrders.hasOffers,
-          ...action.hasOffers,
+        const orders = filterDuplicateObjects([
+          ...state.assetsOrders.orders,
+          ...action.orders,
         ]);
         return {
           ...state,
           assetsOrders: {
-            sellOrders,
-            hasOffers,
+            sell_orders,
+            orders,
           },
         };
 

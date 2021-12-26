@@ -43,10 +43,18 @@ const actions = {
       type: 'REMOVE_COLLECTION_ASSETS',
     });
   },
-  addWatchlistAsset: (asset) => (dispatch) => {
+  addWatchlistAsset: (tokenAddress, tokenId) => async (dispatch) => {
+    const { data } = await api.getAsset(tokenAddress, tokenId);
+    const orders = await data?.orders.filter(
+      (order) => order.payment_token_contract.symbol !== 'ETH'
+    );
+    const sell_orders = await data?.orders.filter(
+      (order) => order.payment_token_contract.symbol === 'ETH'
+    );
+    console.log(data);
     dispatch({
       type: 'ADD_TO_WATCHLIST',
-      watchListAsset: asset,
+      watchListAsset: { ...data, orders, sell_orders },
     });
   },
   removeWatchlistAsset: (assets) => (dispatch) => {
@@ -96,13 +104,13 @@ const actions = {
       const getSellOrders = await api.getUserSellOrders(account, offset, limit);
       const getHasOffers = await api.getUserHasOffers(account, offset, limit);
 
-      const sellOrders = await getSellOrders.data.orders;
-      const hasOffers = await getHasOffers.data.orders;
+      const sell_orders = await getSellOrders.data.orders;
+      const orders = await getHasOffers.data.orders;
 
       dispatch({
         type: 'GET_USER_ASSETS_ORDERS',
-        sellOrders,
-        hasOffers,
+        sell_orders,
+        orders,
       });
     } catch (error) {
       console.log(error.message);

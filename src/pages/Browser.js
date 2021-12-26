@@ -6,9 +6,11 @@ import {
   CardMedia,
   Grid,
   IconButton,
+  Paper,
+  Stack,
   Typography,
 } from '@mui/material';
-import { PlaylistAdd, PlaylistRemove } from '@mui/icons-material';
+import { PlaylistAdd, PlaylistRemove, Close } from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import { Box } from '@mui/system';
 import Loading from '../components/Loading';
@@ -67,17 +69,20 @@ const Browser = ({
   totalAssetsCount,
   watchLists,
   loading,
-  setLoading,
   searchResults,
   limit,
-  searchIndex,
   searchOffset,
-  setSearchOffset,
   firstEvent,
   toggleSearch,
+  enableFilterResetBtn,
+  removeFilters,
   assetSearch,
   setAssetSearch,
   handleAssetSearch,
+  traitsFilter,
+  setTraitsFilter,
+  traitCount,
+  setTraitCount,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -85,34 +90,47 @@ const Browser = ({
   const [displayData, setDisplayData] = useState([]);
 
   useEffect(() => {
-    if (loading) {
-      if (searchOffset - searchIndex <= searchedCollection.count) {
-        dispatch(
-          getCollectionAssets(searchResults.contract, searchOffset, limit)
-        );
-        setSearchOffset(searchIndex * limit);
-        setDisplayData(searchedAssets);
-      }
-      setLoading(false);
-    } else if (searchResults?.contract) {
+    if (loading || searchResults?.contract) {
       dispatch(
         getCollectionAssets(searchResults.contract, searchOffset, limit)
       );
-      setSearchOffset(searchIndex * limit);
-      setDisplayData(searchedAssets);
     }
-  }, [loading, searchOffset, searchIndex, searchResults]);
+  }, [loading, searchOffset, searchResults]);
 
   useEffect(() => {
-    if (!searchedAsset || !searchedAsset.asset_contract) {
+    if (
+      (!searchedAsset || !searchedAsset.asset_contract) &&
+      !traitsFilter.length &&
+      !traitCount
+    ) {
       setDisplayData(searchedAssets);
-    } else {
-      setDisplayData([searchedAsset]);
-      setSearchOffset(searchIndex * limit);
-    }
-  }, [searchedAsset]);
+    } else if (traitsFilter?.length || traitCount) {
+      setDisplayData(() => {
+        const res = searchedAssets.filter((data) =>
+          traitsFilter.every((x) =>
+            data.traits.some((y) => `${y.value}`.toLowerCase().includes(x))
+          )
+        );
+        const applyTraitCount =
+          traitCount &&
+          res.filter(
+            (data) =>
+              data?.traits.filter((t) => `${t.value}`.toLowerCase() !== 'none')
+                .length === traitCount
+          );
 
-  if (!displayData || !displayData.length) {
+        return applyTraitCount || res;
+      });
+    } else if (searchedAsset && searchedAsset.asset_contract) {
+      console.log(searchedAsset);
+      setDisplayData([searchedAsset]);
+    }
+  }, [loading, searchedAsset, traitsFilter, traitCount]);
+
+  if (
+    (!searchedAssets || !searchedAssets.length) &&
+    (!searchedAsset || !searchedAsset.asset_contract)
+  ) {
     return <Loading />;
   }
 
@@ -122,6 +140,8 @@ const Browser = ({
     searchedCollection,
     searchedAsset,
     toggleSearch,
+    removeFilters,
+    enableFilterResetBtn,
     account,
     loading,
     assetSearch,
@@ -129,6 +149,10 @@ const Browser = ({
     handleAssetSearch,
     searchedAsset,
     handleAssetSearch,
+    traitsFilter,
+    setTraitsFilter,
+    traitCount,
+    setTraitCount,
   };
 
   return (
@@ -145,6 +169,64 @@ const Browser = ({
         <Box className={classes.root}>
           <CollectionDetails {...filterProps} />
         </Box>
+        <Stack direction='row' spacing={2} sx={{ m: 1 }}>
+          {traitsFilter.length
+            ? traitsFilter.map((trait) => (
+                <Stack
+                  direction='row'
+                  justifyContent='space-between'
+                  alignItems='center'
+                  variant='outlined'
+                  sx={{
+                    px: 1,
+                    py: 0.5,
+                    border: '1px solid #5F7A61',
+                  }}
+                >
+                  <Typography fontSize='12px' pr={2}>
+                    {trait.toUpperCase()}
+                  </Typography>
+                  <Close
+                    sx={{
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                    }}
+                    onClick={() => {
+                      setTraitsFilter((prev) =>
+                        prev.filter((val) => val !== trait)
+                      );
+                    }}
+                  />
+                </Stack>
+              ))
+            : null}
+          {traitCount ? (
+            <Stack
+              direction='row'
+              justifyContent='space-between'
+              alignItems='center'
+              variant='outlined'
+              sx={{
+                px: 1,
+                py: 0.5,
+                border: '1px solid #5F7A61',
+              }}
+            >
+              <Typography fontSize='12px' pr={2}>
+                {traitCount} Traits
+              </Typography>
+              <Close
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '10px',
+                }}
+                onClick={() => {
+                  setTraitCount(0);
+                }}
+              />
+            </Stack>
+          ) : null}
+        </Stack>
         <Grid container spacing={1}>
           {displayData.map((asset, index) => (
             <Grid
@@ -183,7 +265,14 @@ const Browser = ({
                   ) : (
                     <IconButton
                       className={classes.addToList}
-                      onClick={() => dispatch(addWatchlistAsset(asset))}
+                      onClick={() =>
+                        dispatch(
+                          addWatchlistAsset(
+                            asset.asset_contract.address,
+                            asset.token_id
+                          )
+                        )
+                      }
                     >
                       <PlaylistAdd sx={{ fontSize: '16px' }} />
                     </IconButton>

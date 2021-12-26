@@ -34,6 +34,10 @@ const CollectionDetails = ({
   assetSearch,
   setAssetSearch,
   handleAssetSearch,
+  traitCount,
+  traitsFilter,
+  removeFilters,
+  enableFilterResetBtn,
 }) => {
   const classes = useStyles();
   const [tab, setTab] = useState('1');
@@ -163,7 +167,6 @@ const CollectionDetails = ({
             maxLength: maxInput,
           }}
           InputProps={{
-            disableUnderline: true,
             endAdornment: (
               <InputAdornment position='end'>
                 {assetSearch.length ? (
@@ -180,21 +183,6 @@ const CollectionDetails = ({
                     color='primary'
                   >
                     <Close />
-                  </IconButton>
-                ) : searchedAsset?.asset_contract && !assetSearch.length ? (
-                  <IconButton
-                    sx={{
-                      mx: 2,
-                    }}
-                    onClick={() => {
-                      handleAssetSearch('0', '0');
-                      setTimeout(() => {
-                        setAssetSearch('');
-                      }, 500);
-                    }}
-                    color='primary'
-                  >
-                    <RotateLeft />
                   </IconButton>
                 ) : null}
 
@@ -214,9 +202,25 @@ const CollectionDetails = ({
             ),
           }}
         />
-        <IconButton sx={{ ml: 1 }} onClick={toggleSearch}>
+        <IconButton sx={{ ml: 2 }} onClick={toggleSearch}>
           <FilterListSharp />
         </IconButton>
+        {enableFilterResetBtn ? (
+          <IconButton
+            sx={{
+              ml: 2,
+            }}
+            onClick={() => {
+              handleAssetSearch('0', '0');
+              setTimeout(() => {
+                removeFilters();
+              }, 500);
+            }}
+            color='primary'
+          >
+            <RotateLeft />
+          </IconButton>
+        ) : null}
       </Box>
     </Box>
   );

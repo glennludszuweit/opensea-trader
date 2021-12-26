@@ -5,6 +5,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { useEffect, useState } from 'react';
 import { filterDuplicateObjects, formatEth } from '../utils';
 import { BarChart } from './Chart';
+import { Link, useLocation } from 'react-router-dom';
 const useStyles = makeStyles({
   root: {
     marginBottom: '15px',
@@ -26,17 +27,18 @@ const sortOptions = ['Newest', 'Highest price', 'Lowest price'];
 
 const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   const classes = useStyles();
+  const location = useLocation();
   const [selectedCollection, setSelectedCollection] = useState('');
   const [eventType, setEventType] = useState('');
   const [sort, setSort] = useState('');
   const [search, setSearch] = useState('');
-  const [tab, setTab] = useState('1');
+  const [tab, setTab] = useState('');
 
   const hasOffers = (array) =>
-    array.map((x) => x?.hasOfferOrders?.length && x).filter(Boolean);
+    array.map((x) => x?.orders?.length && x).filter(Boolean);
 
   const isSelling = (array) =>
-    array.map((x) => x?.hasSellOrders?.length && x).filter(Boolean);
+    array.map((x) => x?.sell_orders?.length && x).filter(Boolean);
 
   const searchResults = (array) => {
     const result = array.filter(
@@ -50,7 +52,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
 
   const sortByNewest = (array) => {
     const lastSale = array
-      .filter((data) => data.last_sale)
+      .filter((data) => data?.last_sale)
       .sort((a, b) => {
         return (
           new Date(b.last_sale.event_timestamp) -
@@ -58,7 +60,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
         );
       });
     const createdDate = array
-      .filter((data) => !data.last_sale)
+      .filter((data) => !data?.last_sale)
       .sort((a, b) => {
         return (
           new Date(b.asset_contract.created_date) -
@@ -71,13 +73,13 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
 
   const sortByPrice = (array, direction) => {
     const byOrderPrice = array
-      .filter((data) => data.hasOfferOrders.length || data.hasSellOrders.length)
+      .filter((data) => data?.orders?.length || data?.sell_orders?.length)
       .map((el) => {
         return {
           ...el,
-          orderPrice: el.hasSellOrders.length
-            ? el.hasSellOrders[0].base_price
-            : el.hasOfferOrders[0].base_price,
+          orderPrice: el?.sell_orders?.length
+            ? el.sell_orders[0].base_price
+            : el.orders[0].base_price,
         };
       })
       .sort((a, b) =>
@@ -86,7 +88,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
           : formatEth(a.orderPrice) - formatEth(b.orderPrice)
       );
     const rest = array.filter(
-      (data) => !data.hasOfferOrders.length || !data.hasSellOrders.length
+      (data) => !data?.orders?.length || !data?.sell_orders?.length
     );
     const sortedData = [...byOrderPrice, ...rest].map((x) => {
       delete x.orderPrice;
@@ -101,6 +103,17 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
     );
     return filtered;
   };
+
+  const tabsValue = [
+    { label: 'Assets', url: '/assets' },
+    { label: 'Watchlist', url: '/watchlist' },
+  ];
+
+  useEffect(() => {
+    tabsValue.filter(
+      (val, index) => val.url === location.pathname && setTab(`${index + 1}`)
+    );
+  }, []);
 
   useEffect(() => {
     if (!selectedCollection || selectedCollection === 'All') {
@@ -210,18 +223,6 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
     setTab(newValue);
   };
 
-  const tabsValue = [
-    { label: 'Details', value: '' },
-    {
-      label: 'Chart',
-      value: (
-        <Box sx={{ maxWidth: '800px', margin: '0 auto 30px' }}>
-          <BarChart />
-        </Box>
-      ),
-    },
-  ];
-
   return (
     <Box
       sx={{
@@ -230,22 +231,19 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
       }}
     >
       <TabContext value={tab}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <TabList onChange={handleTabChange} aria-label='lab API tabs example'>
-            <Tab
-              label={tabsValue[0].label}
-              value='1'
-              sx={{ fontSize: '12px' }}
-            />
-            <Tab
-              label={tabsValue[1].label}
-              value='2'
-              sx={{ fontSize: '12px' }}
-            />
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <TabList onChange={handleTabChange}>
+            {tabsValue.map((val, index) => (
+              <Tab
+                component={Link}
+                to={val.url}
+                label={val.label}
+                value={`${index + 1}`}
+                sx={{ fontSize: '12px' }}
+              />
+            ))}
           </TabList>
         </Box>
-        <TabPanel value='1'>{tabsValue[0].value}</TabPanel>
-        <TabPanel value='2'>{tabsValue[1].value}</TabPanel>
       </TabContext>
       <Grid container spacing={2} alignItems='center' className={classes.root}>
         <Grid item xs={12} md={4} lg={3}>

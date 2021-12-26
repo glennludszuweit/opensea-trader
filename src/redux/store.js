@@ -21,8 +21,8 @@ export const initialState = {
     userAssets: [],
     watchLists: [],
     assetsOrders: {
-      sellOrders: [],
-      hasOffers: [],
+      sell_orders: [],
+      orders: [],
     },
     userData: {
       totalAssetsCount: 0,
