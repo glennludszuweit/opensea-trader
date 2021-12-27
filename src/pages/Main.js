@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { getAsset, getCollectionAssets, getUserData } from '../redux/actions';
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { getAsset, getCollectionAssets, getUserData } from "../redux/actions";
 import {
   Paper,
   Container,
@@ -9,35 +9,35 @@ import {
   Box,
   CssBaseline,
   IconButton,
-} from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import Nav from '../components/Nav';
-import LeftSideNav from '../components/LeftSideNav';
-import RightSideNav from '../components/RightSideNav';
-import Buy from './Buy';
-import Sell from './Sell';
-import Offers from './Offers';
-import Auction from './Auction';
-import Assets from './Assets';
-import Watchlist from './Watchlist';
-import Browser from './Browser';
-import Dashboard from './Dashboard';
-import SearchFilter from '../components/SearchFilter';
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import Nav from "../components/Nav";
+import LeftSideNav from "../components/LeftSideNav";
+import RightSideNav from "../components/RightSideNav";
+import Buy from "./Buy";
+import Sell from "./Sell";
+import Offers from "./Offers";
+import Auction from "./Auction";
+import Assets from "./Assets";
+import Watchlist from "./Watchlist";
+import Browser from "./Browser";
+import Dashboard from "./Dashboard";
+import SearchFilter from "../components/SearchFilter";
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    width: '100%',
+    display: "flex",
+    width: "100%",
   },
   wrapper: {
     flexGrow: 1,
   },
   container: {
-    margin: '0 auto 2rem !important',
+    margin: "0 auto 2rem !important",
   },
   main: {
-    padding: '0 1rem',
-    boxShadow: 'none !important',
+    padding: "0 1rem",
+    boxShadow: "none !important",
   },
 });
 
@@ -72,12 +72,12 @@ const Main = ({ seaport }) => {
     right: false,
   });
   const [account, setAccount] = useState(
-    '0x274008f15dc24406d8656bafa1c5994e3da1b094'
+    "0x274008f15dc24406d8656bafa1c5994e3da1b094"
   );
   const [reviewedAssets, setReviewedAssets] = useState([]);
   const [searchResults, setSearchResults] = useState({
-    name: '',
-    contract: '',
+    name: "",
+    contract: "",
   });
   const [openSearch, setOpenSearch] = useState(false);
   const [limit, setLimit] = useState(50);
@@ -85,7 +85,7 @@ const Main = ({ seaport }) => {
     +Math.abs(+searchedAssets.length / limit) || 1
   );
   const [searchOffset, setSearchOffset] = useState(0);
-  const [assetSearch, setAssetSearch] = useState('');
+  const [assetSearch, setAssetSearch] = useState("");
   const [traitsFilter, setTraitsFilter] = useState([]);
   const [traitCounts, setTraitCounts] = useState([]);
   const [traitCount, setTraitCount] = useState(0);
@@ -99,7 +99,7 @@ const Main = ({ seaport }) => {
       ...new Set(
         searchedAssets.map(
           (x) =>
-            x.traits.filter((t) => `${t.value}`.toLowerCase() !== 'none').length
+            x.traits.filter((t) => `${t.value}`.toLowerCase() !== "none").length
         )
       ),
     ]);
@@ -144,7 +144,7 @@ const Main = ({ seaport }) => {
   };
 
   const removeFilters = () => {
-    setAssetSearch('');
+    setAssetSearch("");
     setTraitCount(0);
     setTraitsFilter([]);
     // toggleSearch();

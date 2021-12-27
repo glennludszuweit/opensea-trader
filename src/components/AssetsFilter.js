@@ -1,38 +1,38 @@
-import { Autocomplete, Grid, Tab, TextField } from '@mui/material';
-import { makeStyles } from '@mui/styles';
-import { Box } from '@mui/system';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { useEffect, useState } from 'react';
-import { filterDuplicateObjects, formatEth } from '../utils';
-import { BarChart } from './Chart';
-import { Link, useLocation } from 'react-router-dom';
+import { Autocomplete, Grid, Tab, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/system";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { useEffect, useState } from "react";
+import { filterDuplicateObjects, formatEth } from "../utils";
+import { BarChart } from "./Chart";
+import { Link, useLocation } from "react-router-dom";
 const useStyles = makeStyles({
   root: {
-    marginBottom: '15px',
+    marginBottom: "15px",
   },
   button: {
-    height: '55px',
-    width: '55px',
+    height: "55px",
+    width: "55px",
   },
   textField: {
     [`& fieldset`]: {
-      borderRadius: '0 !important',
+      borderRadius: "0 !important",
     },
   },
 });
 
-const eventOptions = ['All', 'For sale', 'Has offers'];
+const eventOptions = ["All", "For sale", "Has offers"];
 
-const sortOptions = ['Newest', 'Highest price', 'Lowest price'];
+const sortOptions = ["Newest", "Highest price", "Lowest price"];
 
 const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   const classes = useStyles();
   const location = useLocation();
-  const [selectedCollection, setSelectedCollection] = useState('');
-  const [eventType, setEventType] = useState('');
-  const [sort, setSort] = useState('');
-  const [search, setSearch] = useState('');
-  const [tab, setTab] = useState('');
+  const [selectedCollection, setSelectedCollection] = useState("");
+  const [eventType, setEventType] = useState("");
+  const [sort, setSort] = useState("");
+  const [search, setSearch] = useState("");
+  const [tab, setTab] = useState("1");
 
   const hasOffers = (array) =>
     array.map((x) => x?.orders?.length && x).filter(Boolean);
@@ -105,8 +105,8 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   };
 
   const tabsValue = [
-    { label: 'Assets', url: '/assets' },
-    { label: 'Watchlist', url: '/watchlist' },
+    { label: "Assets", url: "/assets" },
+    { label: "Watchlist", url: "/watchlist" },
   ];
 
   useEffect(() => {
@@ -116,41 +116,41 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
   }, []);
 
   useEffect(() => {
-    if (!selectedCollection || selectedCollection === 'All') {
-      if (eventType === 'For sale') {
-        if (sort === 'Highest price') {
+    if (!selectedCollection || selectedCollection === "All") {
+      if (eventType === "For sale") {
+        if (sort === "Highest price") {
           setDisplayData(searchResults(sortByPrice(isSelling(userAssets), 1)));
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(searchResults(sortByPrice(isSelling(userAssets), 2)));
         } else {
           setDisplayData(searchResults(sortByNewest(isSelling(userAssets))));
         }
-      } else if (eventType === 'Has offers') {
-        if (sort === 'Highest price') {
+      } else if (eventType === "Has offers") {
+        if (sort === "Highest price") {
           setDisplayData(searchResults(sortByPrice(hasOffers(userAssets), 1)));
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(searchResults(sortByPrice(hasOffers(userAssets), 2)));
         } else {
           setDisplayData(searchResults(sortByNewest(hasOffers(userAssets))));
         }
       } else {
-        if (sort === 'Highest price') {
+        if (sort === "Highest price") {
           setDisplayData(searchResults(sortByPrice(userAssets, 1)));
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(searchResults(sortByPrice(userAssets, 2)));
         } else {
           setDisplayData(searchResults(sortByNewest(userAssets)));
         }
       }
     } else {
-      if (eventType === 'For sale') {
-        if (sort === 'Highest price') {
+      if (eventType === "For sale") {
+        if (sort === "Highest price") {
           setDisplayData(
             searchResults(
               sortByPrice(filteredWithCollection(isSelling(userAssets)), 1)
             )
           );
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(
             searchResults(
               sortByPrice(filteredWithCollection(isSelling(userAssets)), 2)
@@ -163,14 +163,14 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
             )
           );
         }
-      } else if (eventType === 'Has offers') {
-        if (sort === 'Highest price') {
+      } else if (eventType === "Has offers") {
+        if (sort === "Highest price") {
           setDisplayData(
             searchResults(
               sortByPrice(filteredWithCollection(hasOffers(userAssets)), 1)
             )
           );
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(
             searchResults(
               sortByPrice(filteredWithCollection(hasOffers(userAssets)), 2)
@@ -184,11 +184,11 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
           );
         }
       } else {
-        if (sort === 'Highest price') {
+        if (sort === "Highest price") {
           setDisplayData(
             searchResults(sortByPrice(filteredWithCollection(userAssets), 1))
           );
-        } else if (sort === 'Lowest price') {
+        } else if (sort === "Lowest price") {
           setDisplayData(
             searchResults(sortByPrice(filteredWithCollection(userAssets), 2))
           );
@@ -227,11 +227,11 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
     <Box
       sx={{
         my: 4,
-        width: '100%',
+        width: "100%",
       }}
     >
       <TabContext value={tab}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
           <TabList onChange={handleTabChange}>
             {tabsValue.map((val, index) => (
               <Tab
@@ -239,7 +239,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
                 to={val.url}
                 label={val.label}
                 value={`${index + 1}`}
-                sx={{ fontSize: '12px' }}
+                sx={{ fontSize: "12px" }}
               />
             ))}
           </TabList>
@@ -251,7 +251,7 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
             type='search'
             className={classes.textField}
             size='small'
-            placeholder={collectionNames ? 'Search' : 'Loading...'}
+            placeholder={collectionNames ? "Search" : "Loading..."}
             fullWidth
             onChange={handleSearch}
           />
@@ -264,15 +264,15 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
             className={classes.textField}
             inputValue={selectedCollection}
             onInputChange={handleCollectionChange}
-            options={['All', ...collectionNames]}
+            options={["All", ...collectionNames]}
             renderInput={(params) => (
               <TextField
                 {...params}
                 size='small'
-                placeholder={collectionNames ? 'Collection' : 'Loading...'}
+                placeholder={collectionNames ? "Collection" : "Loading..."}
                 InputProps={{
                   ...params.InputProps,
-                  type: 'text',
+                  type: "text",
                 }}
               />
             )}
@@ -291,10 +291,10 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
               <TextField
                 {...params}
                 size='small'
-                placeholder={collectionNames ? 'Filter by' : 'Loading...'}
+                placeholder={collectionNames ? "Filter by" : "Loading..."}
                 InputProps={{
                   ...params.InputProps,
-                  type: 'text',
+                  type: "text",
                 }}
               />
             )}
@@ -313,10 +313,10 @@ const Filter = ({ userAssets, setDisplayData, collectionNames, loading }) => {
               <TextField
                 {...params}
                 size='small'
-                placeholder={collectionNames ? 'Sort by' : 'Loading...'}
+                placeholder={collectionNames ? "Sort by" : "Loading..."}
                 InputProps={{
                   ...params.InputProps,
-                  type: 'text',
+                  type: "text",
                 }}
               />
             )}

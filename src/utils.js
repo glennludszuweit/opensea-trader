@@ -1,16 +1,4 @@
-import web3 from 'web3';
-
-export const setLS = (state) => {
-  localStorage.setItem('_State', JSON.stringify(state));
-};
-
-export const getLS = () => {
-  return JSON.parse(localStorage.getItem('_State'));
-};
-
-export const clearLS = (state) => {
-  localStorage.removeItem(state);
-};
+import web3 from "web3";
 
 const sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -27,7 +15,7 @@ const getMillisToSleep = (retryHeaderString) => {
 export const fetchAndRetryIfNecessary = async (callAPI) => {
   const response = await callAPI();
   if (response.status === 429) {
-    const retryAfter = response.headers.get('retry-after');
+    const retryAfter = response.headers.get("retry-after");
     const millisToSleep = getMillisToSleep(retryAfter);
     await sleep(millisToSleep);
     return fetchAndRetryIfNecessary(callAPI);
@@ -39,7 +27,7 @@ export const formatEth = (num) => {
   const formated = Number(web3.utils.fromWei(num));
   const amount = parseFloat(formated)
     .toFixed(3)
-    .replace(/\.?0+$/, '');
+    .replace(/\.?0+$/, "");
   return amount;
 };
 

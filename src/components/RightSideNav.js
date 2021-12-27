@@ -1,13 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Paper, ListItem, ListItemIcon, ListItemText } from '@mui/material/';
-import {
-  LocalOffer,
-  Timer,
-  ShoppingCart,
-  Storefront,
-} from '@mui/icons-material';
+import { Collections, Dashboard } from '@mui/icons-material';
 
-const LeftSideNav = ({ openSideNav, toggleMenu }) => {
+const RightSideNav = ({ openSideNav, toggleMenu }) => {
   const location = useLocation();
 
   const styles = {
@@ -16,12 +11,12 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
       pb: 1,
       pt: 2,
       px: 2,
-      ml: 0.5,
+      mr: 0.5,
       zIndex: 5,
-      width: 'auto',
+      width: 300,
       position: 'fixed',
-      left: -5,
-      top: `${openSideNav.left ? '64px' : '-1000px'}`,
+      right: -5,
+      top: `${openSideNav.right ? '64px' : '-1000px'}`,
       transition: 'all 1s ease',
     },
     selectedItem: {
@@ -34,10 +29,16 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
     },
   };
   const menuList = [
-    { url: '/offers', name: 'Send Offers', icon: <LocalOffer /> },
-    { url: '/auction', name: 'Open Auction', icon: <Timer /> },
-    { url: '/buy', name: 'Buy', icon: <ShoppingCart /> },
-    { url: '/sell', name: 'Sell', icon: <Storefront /> },
+    {
+      url: '/',
+      name: 'Dashboard',
+      icon: <Dashboard />,
+    },
+    {
+      url: '/assets',
+      name: 'Assets',
+      icon: <Collections />,
+    },
   ];
 
   return (
@@ -48,7 +49,8 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
             button
             sx={{
               ...(location.pathname === item.url && styles.selectedItem),
-              mt: 1,
+              my: 1,
+              fontSize: '14px',
             }}
           >
             <ListItemIcon>{item.icon}</ListItemIcon>
@@ -60,4 +62,4 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
   );
 };
 
-export default LeftSideNav;
+export default RightSideNav;

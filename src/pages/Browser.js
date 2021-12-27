@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   Card,
   CardContent,
@@ -9,54 +9,54 @@ import {
   Paper,
   Stack,
   Typography,
-} from '@mui/material';
-import { PlaylistAdd, PlaylistRemove, Close } from '@mui/icons-material';
-import { makeStyles } from '@mui/styles';
-import { Box } from '@mui/system';
-import Loading from '../components/Loading';
+} from "@mui/material";
+import { PlaylistAdd, PlaylistRemove, Close } from "@mui/icons-material";
+import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/system";
+import Loading from "../components/Loading";
 import {
   addWatchlistAsset,
   getCollectionAssets,
   removeWatchlistAsset,
-} from '../redux/actions';
-import { formatEth } from '../utils';
-import CollectionDetails from '../components/CollectionDetails';
+} from "../redux/actions";
+import { formatEth } from "../utils";
+import CollectionDetails from "../components/CollectionDetails";
 
 const useStyles = makeStyles({
   root: {
-    width: '100% !important',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100% !important",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   item: {
-    position: 'relative',
-    cursor: 'pointer',
-    '& .css-dasnyc-MuiImageListItemBar-title': {
-      color: '#181D31 !important',
+    position: "relative",
+    cursor: "pointer",
+    "& .css-dasnyc-MuiImageListItemBar-title": {
+      color: "#181D31 !important",
     },
   },
   card: {
-    boxShadow: 'none !important',
-    margin: '5px',
-    borderRadius: '0 !important',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
+    boxShadow: "none !important",
+    margin: "5px",
+    borderRadius: "0 !important",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
   },
   img: {
-    height: '350px !important',
+    height: "350px !important",
   },
   imgHeader: {
-    backgroundColor: '#F0E9D2',
+    backgroundColor: "#F0E9D2",
   },
   addToList: {
-    position: 'absolute !important',
+    position: "absolute !important",
     top: 5,
     right: 5,
     zIndex: 2,
-    padding: '3px !important',
-    backgroundColor: 'rgba(255,255,255,0.5) !important',
-    borderRadius: '0 !important',
+    padding: "3px !important",
+    backgroundColor: "rgba(255,255,255,0.5) !important",
+    borderRadius: "0 !important",
   },
 });
 
@@ -115,7 +115,7 @@ const Browser = ({
           traitCount &&
           res.filter(
             (data) =>
-              data?.traits.filter((t) => `${t.value}`.toLowerCase() !== 'none')
+              data?.traits.filter((t) => `${t.value}`.toLowerCase() !== "none")
                 .length === traitCount
           );
 
@@ -159,16 +159,27 @@ const Browser = ({
     searchedAssets.length && (
       <Box
         style={{
-          width: '100% !important',
-          height: '100vh',
-          overflow: 'auto',
-          margin: '0 !important',
+          width: "100% !important",
+          height: "100vh",
+          overflow: "auto",
+          paddingBottom: "50px",
+          margin: "0 !important",
         }}
         onScroll={firstEvent}
       >
         <Box className={classes.root}>
           <CollectionDetails {...filterProps} />
         </Box>
+        <Typography
+          fontSize='12px'
+          sx={{
+            px: 1,
+            pl: 0.5,
+            pr: 2,
+          }}
+        >
+          {displayData.length} Assets loaded (scroll down to load more)
+        </Typography>
         <Stack direction='row' spacing={2} sx={{ m: 1 }}>
           {traitsFilter.length
             ? traitsFilter.map((trait) => (
@@ -180,7 +191,7 @@ const Browser = ({
                   sx={{
                     px: 1,
                     py: 0.5,
-                    border: '1px solid #5F7A61',
+                    border: "1px solid #5F7A61",
                   }}
                 >
                   <Typography fontSize='12px' pr={2}>
@@ -188,8 +199,8 @@ const Browser = ({
                   </Typography>
                   <Close
                     sx={{
-                      cursor: 'pointer',
-                      fontSize: '10px',
+                      cursor: "pointer",
+                      fontSize: "10px",
                     }}
                     onClick={() => {
                       setTraitsFilter((prev) =>
@@ -209,7 +220,7 @@ const Browser = ({
               sx={{
                 px: 1,
                 py: 0.5,
-                border: '1px solid #5F7A61',
+                border: "1px solid #5F7A61",
               }}
             >
               <Typography fontSize='12px' pr={2}>
@@ -217,8 +228,8 @@ const Browser = ({
               </Typography>
               <Close
                 sx={{
-                  cursor: 'pointer',
-                  fontSize: '10px',
+                  cursor: "pointer",
+                  fontSize: "10px",
                 }}
                 onClick={() => {
                   setTraitCount(0);
@@ -240,8 +251,8 @@ const Browser = ({
               <Card className={classes.card} variant='outlined'>
                 <div
                   style={{
-                    position: 'relative',
-                    width: '100%',
+                    position: "relative",
+                    width: "100%",
                     padding: 0,
                     margin: 0,
                   }}
@@ -260,7 +271,7 @@ const Browser = ({
                         )
                       }
                     >
-                      <PlaylistRemove sx={{ fontSize: '16px', color: 'red' }} />
+                      <PlaylistRemove sx={{ fontSize: "16px", color: "red" }} />
                     </IconButton>
                   ) : (
                     <IconButton
@@ -274,7 +285,7 @@ const Browser = ({
                         )
                       }
                     >
-                      <PlaylistAdd sx={{ fontSize: '16px' }} />
+                      <PlaylistAdd sx={{ fontSize: "16px" }} />
                     </IconButton>
                   )}
                 </div>
@@ -283,21 +294,21 @@ const Browser = ({
                   image={asset.image_url}
                   alt={asset.token_id}
                   sx={{
-                    objectFit: 'fill',
-                    borderRadius: '0 !important',
-                    objectPosition: 'center',
-                    maxHeight: '250px',
-                    width: '100%',
-                    boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.514) inset',
+                    objectFit: "fill",
+                    borderRadius: "0 !important",
+                    objectPosition: "center",
+                    maxHeight: "250px",
+                    width: "100%",
+                    boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.514) inset",
                   }}
                 />
 
                 <CardContent sx={{ maxHeight: 65 }}>
                   <Grid container spacing={0}>
                     <Grid item xs={8} sx={{ p: 0, mt: 0 }}>
-                      <Typography sx={{ fontSize: '14px' }}>
+                      <Typography sx={{ fontSize: "14px" }}>
                         {asset.token_id.length > 5
-                          ? asset.token_id.substring(0, 5) + '...'
+                          ? asset.token_id.substring(0, 5) + "..."
                           : asset.token_id}
                       </Typography>
                     </Grid>
@@ -306,18 +317,18 @@ const Browser = ({
                       new Date(asset?.sell_orders[0]?.closing_date) >
                         Date.now() ? (
                         <>
-                          <span style={{ fontSize: '10px' }}>
+                          <span style={{ fontSize: "10px" }}>
                             Listing price
                           </span>
                           <div
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-end',
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-end",
                             }}
                           >
                             <img
-                              style={{ height: '12px', marginRight: '3px' }}
+                              style={{ height: "12px", marginRight: "3px" }}
                               src={
                                 asset.sell_orders[0].payment_token_contract
                                   .image_url
@@ -328,7 +339,7 @@ const Browser = ({
                               }
                             />
                             <Typography
-                              sx={{ fontWeight: 'bold', fontSize: 14 }}
+                              sx={{ fontWeight: "bold", fontSize: 14 }}
                             >
                               {formatEth(asset.sell_orders[0].base_price)}
                             </Typography>
@@ -336,21 +347,21 @@ const Browser = ({
                         </>
                       ) : asset?.last_sale && !asset?.orders?.length ? (
                         <>
-                          <span style={{ fontSize: '10px' }}>Last sold</span>
+                          <span style={{ fontSize: "10px" }}>Last sold</span>
                           <div
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-end',
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "flex-end",
                             }}
                           >
                             <img
-                              style={{ height: '12px', marginRight: '3px' }}
+                              style={{ height: "12px", marginRight: "3px" }}
                               src={asset.last_sale.payment_token.image_url}
                               alt={asset.last_sale.payment_token.symbol}
                             />
                             <Typography
-                              sx={{ fontSize: 12, fontWeight: 'bold' }}
+                              sx={{ fontSize: 12, fontWeight: "bold" }}
                             >
                               {formatEth(asset.last_sale.total_price)}
                             </Typography>
@@ -361,24 +372,24 @@ const Browser = ({
                       new Date(asset?.orders[0]?.closing_date) > Date.now() ? (
                         <div
                           style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "flex-end",
                           }}
                         >
                           <span
-                            style={{ fontSize: '10px', marginRight: '3px' }}
+                            style={{ fontSize: "10px", marginRight: "3px" }}
                           >
                             Highest offer
                           </span>
                           <img
-                            style={{ height: '12px', marginRight: '3px' }}
+                            style={{ height: "12px", marginRight: "3px" }}
                             src={
                               asset.orders[0].payment_token_contract.image_url
                             }
                             alt={asset.orders[0].payment_token_contract.symbol}
                           />
-                          <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>
+                          <Typography sx={{ fontSize: 12, fontWeight: "bold" }}>
                             {formatEth(asset.orders[0].base_price)}
                           </Typography>
                         </div>
