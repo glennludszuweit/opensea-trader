@@ -1,8 +1,18 @@
-import { AppBar, Toolbar, IconButton, Grid } from '@mui/material/';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  IconButton,
+  Grid,
+  Typography,
+} from '@mui/material/';
 import Search from './Search';
-import { AccountCircleTwoTone, Menu } from '@mui/icons-material';
+import { AccountBoxSharp, Menu } from '@mui/icons-material';
+import Connect from './Connect';
 
 const Nav = ({
+  web3Address,
+  setAccount,
   openSideNav,
   setOpenSideNav,
   setSearchResults,
@@ -10,6 +20,7 @@ const Nav = ({
   setSearchIndex,
   setSearchOffset,
   searchedCollection,
+  handleCollectionSearch,
 }) => {
   const searchProps = {
     setSearchResults,
@@ -17,6 +28,7 @@ const Nav = ({
     setSearchIndex,
     setSearchOffset,
     searchedCollection,
+    handleCollectionSearch,
   };
   return (
     <AppBar position='fixed'>
@@ -53,20 +65,33 @@ const Nav = ({
             <Search {...searchProps} />
           </Grid>
           <Grid item xs={1} md={2} lg={3} sx={{ textAlign: 'right' }}>
-            <IconButton
-              color='inherit'
-              onClick={() => {
-                setOpenSideNav({
-                  left: false,
-                  right: !openSideNav.right,
-                });
-              }}
-              sx={{
-                ...(openSideNav.right && { transform: 'scale(1.1)' }),
-              }}
-            >
-              <AccountCircleTwoTone />
-            </IconButton>
+            {!web3Address ? (
+              <Connect setAccount={setAccount} />
+            ) : (
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={() => {
+                  setOpenSideNav({
+                    left: false,
+                    right: !openSideNav.right,
+                  });
+                }}
+                sx={{
+                  borderRadius: '0 !important',
+                  p: 0,
+                }}
+              >
+                <AccountBoxSharp
+                  sx={{ borderRadius: '0 !important', fontSize: '3em' }}
+                />
+                <Typography sx={{ px: 1 }}>
+                  {web3Address.substring(0, 4) +
+                    '...' +
+                    web3Address.substring(web3Address.length - 4)}
+                </Typography>
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Toolbar>

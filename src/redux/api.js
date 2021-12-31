@@ -43,6 +43,14 @@ const api = {
       options
     );
   },
+  getUserEvents: (account, limit = 50, offset = 0) => {
+    const date = new Date();
+    const occured30DaysDate = date.setDate(date.getDate() - 90);
+    return axios.get(
+      `${API_BASE_URI}/events?account_address=${account}&only_opensea=true&offset=${offset}&limit=${limit}&occurred_after=${occured30DaysDate}&event_type=successful`,
+      options
+    );
+  },
   getUserSellOrders: (
     account,
     offset,

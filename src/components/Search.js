@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { LocationSearching } from '@mui/icons-material';
 import { Autocomplete, InputAdornment, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { top500Collections } from '../data';
-import { removeCollectionAssets } from '../redux/actions';
 
 const useStyles = makeStyles({
   textField: {
@@ -23,15 +21,8 @@ const useStyles = makeStyles({
   },
 });
 
-const Search = ({
-  searchedCollection,
-  setSearchResults,
-  searchResults,
-  setSearchIndex,
-  setSearchOffset,
-}) => {
+const Search = ({ searchResults, handleCollectionSearch }) => {
   const classes = useStyles();
-  const dispatch = useDispatch();
 
   const handleCollectionChange = (e, value) => {
     if (
@@ -39,10 +30,7 @@ const Search = ({
       searchResults.name !== value
     ) {
       const newValue = top500Collections.filter((item) => item.name === value);
-      dispatch(removeCollectionAssets());
-      setSearchIndex(0);
-      setSearchOffset(0);
-      setSearchResults(newValue[0]);
+      handleCollectionSearch(newValue[0].contract, newValue[0].name);
     }
   };
 

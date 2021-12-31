@@ -29,13 +29,10 @@ const useStyles = makeStyles({
 
 const CollectionDetails = ({
   searchedCollection,
-  searchedAsset,
   toggleSearch,
   assetSearch,
   setAssetSearch,
   handleAssetSearch,
-  traitCount,
-  traitsFilter,
   removeFilters,
   enableFilterResetBtn,
 }) => {

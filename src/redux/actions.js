@@ -73,10 +73,16 @@ const actions = {
       const collectionContracts = await data.map(
         (item) => item.primary_asset_contracts[0]
       );
+      const userEvents = await api.getUserEvents(account);
+      const userActivities = await userEvents.data.asset_events;
+
+      console.log(userActivities);
 
       dispatch({
         type: 'GET_USER_DATA',
+        web3Address: account,
         userCollections: data,
+        userActivities,
         collectionContracts,
         totalAssetsCount,
         collectionNames,
@@ -92,7 +98,6 @@ const actions = {
 
       dispatch({
         type: 'GET_USER_ASSETS',
-        web3Address: account,
         userAssets: newAssets,
       });
     } catch (error) {
@@ -122,6 +127,12 @@ const actions = {
       type: 'REMOVE_ORDER_ASSETS',
     });
   },
+
+  clearData: () => (dispatch) => {
+    dispatch({
+      type: 'CLEAR_DATA',
+    });
+  },
 };
 
 export const {
@@ -135,4 +146,5 @@ export const {
   removeOrderAsset,
   addWatchlistAsset,
   removeWatchlistAsset,
+  clearData,
 } = actions;

@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 
-const Connect = ({ account, setAccount }) => {
+const Connect = ({ setAccount }) => {
   const handleConnect = async () => {
     let provider = window.ethereum;
     if (typeof provider !== 'undefined') {
@@ -9,7 +9,6 @@ const Connect = ({ account, setAccount }) => {
         .then((acc) => acc);
 
       setAccount(res[0]);
-      console.log(account);
     }
   };
 
@@ -21,11 +20,7 @@ const Connect = ({ account, setAccount }) => {
       onClick={handleConnect}
       disableElevation
     >
-      {account
-        ? account.substring(0, 4) +
-          '.....' +
-          account.substring(account.length - 4)
-        : 'Connect Wallet'}
+      Connect Wallet
     </Button>
   );
 };

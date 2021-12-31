@@ -62,10 +62,12 @@ const reducers = {
         return {
           ...state,
           userData: {
+            web3Address: action.web3Address,
             totalAssetsCount: action.totalAssetsCount,
             collectionNames: action.collectionNames,
             collectionContracts: action.collectionContracts,
             userCollections: action.userCollections,
+            userActivities: action.userActivities,
           },
         };
 
@@ -76,24 +78,24 @@ const reducers = {
         ]);
 
         const mergeWithOrders = mergeAssetsArr.map((asset) => {
-          const hasSellOrders = state.assetsOrders?.sell_orders.filter(
+          const sell_orders = state.assetsOrders?.sell_orders.filter(
             (order) => order.asset.id === asset.id
           );
-          const hasOfferOrders = state.assetsOrders?.orders.filter(
+          const orders = state.assetsOrders?.orders.filter(
             (order) => order.asset.id === asset.id
           );
-          return { ...asset, hasSellOrders, hasOfferOrders };
+          return { ...asset, sell_orders, orders };
         });
 
         const userAssets = filterDuplicateObjects(mergeWithOrders).map(
           (asset) => {
-            if (asset.hasOfferOrders.length) {
-              asset.hasOfferOrders.forEach((order) => {
+            if (asset.orders.length) {
+              asset.orders.forEach((order) => {
                 delete order.asset;
               });
             }
-            if (asset.hasSellOrders.length) {
-              asset.hasSellOrders.forEach((order) => {
+            if (asset.sell_orders.length) {
+              asset.sell_orders.forEach((order) => {
                 delete order.asset;
               });
             }
@@ -104,7 +106,6 @@ const reducers = {
         return {
           ...state,
           userAssets,
-          web3Address: action.web3Address,
         };
 
       case 'GET_USER_ASSETS_ORDERS':
