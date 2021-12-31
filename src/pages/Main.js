@@ -55,6 +55,7 @@ const Main = ({ seaport }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const web3Address = useSelector((state) => state.user.userData.web3Address);
+  const userDetails = useSelector((state) => state.user.userData.userDetails);
   const userAssets = useSelector((state) => state.user.userAssets);
   const userActivities = useSelector(
     (state) => state.user.userData.userActivities
@@ -111,9 +112,13 @@ const Main = ({ seaport }) => {
   const [traitCount, setTraitCount] = useState(0);
 
   useEffect(() => {
-    dispatch(clearData());
-    dispatch(getUserData(account, 0, 300));
-  }, [account]);
+    if (!web3Address) {
+      setOffset(0);
+      setIndex(1);
+      setSearchOffset(0);
+      dispatch(getUserData(account, 0, 300));
+    }
+  }, [web3Address, account]);
 
   useEffect(() => {
     if (web3Address) {
@@ -197,6 +202,7 @@ const Main = ({ seaport }) => {
 
   const commonStateProps = {
     web3Address,
+    userDetails,
     userAssets,
     userActivities,
     userCollections,

@@ -63,6 +63,7 @@ const reducers = {
           ...state,
           userData: {
             web3Address: action.web3Address,
+            userDetails: action.userDetails,
             totalAssetsCount: action.totalAssetsCount,
             collectionNames: action.collectionNames,
             collectionContracts: action.collectionContracts,

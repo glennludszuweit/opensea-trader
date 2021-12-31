@@ -12,6 +12,7 @@ import Connect from './Connect';
 
 const Nav = ({
   web3Address,
+  userDetails,
   setAccount,
   openSideNav,
   setOpenSideNav,
@@ -82,13 +83,16 @@ const Nav = ({
                   p: 0,
                 }}
               >
-                <AccountBoxSharp
-                  sx={{ borderRadius: '0 !important', fontSize: '3em' }}
+                <img
+                  style={{ height: '2.5em', width: '2.5em', margin: '.25em' }}
+                  src={userDetails?.profile_img_url}
+                  alt={userDetails?.user.username}
                 />
-                <Typography sx={{ px: 1 }}>
+                <Typography sx={{ px: 1, textTransform: 'none' }}>
                   {web3Address.substring(0, 4) +
                     '...' +
                     web3Address.substring(web3Address.length - 4)}
+                  {/* {userDetails?.user.username} */}
                 </Typography>
               </Button>
             )}

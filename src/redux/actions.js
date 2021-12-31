@@ -66,6 +66,7 @@ const actions = {
   getUserData: (account, offset, limit) => async (dispatch) => {
     try {
       const { data } = await api.getUserData(account, offset, limit);
+      const userDetailsRes = await api.getUserDetails(account);
       const totalAssetsCount = await data
         .map((item) => item.owned_asset_count)
         .reduce((val, acc) => val + acc, 0);
@@ -75,13 +76,15 @@ const actions = {
       );
       const userEvents = await api.getUserEvents(account);
       const userActivities = await userEvents.data.asset_events;
+      const userDetails = await userDetailsRes.data.data;
 
-      console.log(userActivities);
+      console.log(userDetails);
 
       dispatch({
         type: 'GET_USER_DATA',
         web3Address: account,
         userCollections: data,
+        userDetails,
         userActivities,
         collectionContracts,
         totalAssetsCount,

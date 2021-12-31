@@ -1,9 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Paper, ListItem, ListItemIcon, ListItemText } from '@mui/material/';
-import { Collections, Dashboard } from '@mui/icons-material';
+import { Collections, Dashboard, LogoutSharp } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { clearData } from '../redux/actions';
 
-const RightSideNav = ({ openSideNav, toggleMenu }) => {
+const RightSideNav = ({ openSideNav, toggleMenu, setAccount }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const styles = {
     root: {
@@ -29,15 +32,16 @@ const RightSideNav = ({ openSideNav, toggleMenu }) => {
     },
   };
   const menuList = [
+    { onClick: null, url: '/', name: 'Dashboard', icon: <Dashboard /> },
+    { onClick: null, url: '/assets', name: 'Assets', icon: <Collections /> },
     {
-      url: '/',
-      name: 'Dashboard',
-      icon: <Dashboard />,
-    },
-    {
-      url: '/assets',
-      name: 'Assets',
-      icon: <Collections />,
+      onClick: () => {
+        setAccount('');
+        dispatch(clearData());
+      },
+      url: '#',
+      name: 'Logout',
+      icon: <LogoutSharp />,
     },
   ];
 
@@ -46,6 +50,7 @@ const RightSideNav = ({ openSideNav, toggleMenu }) => {
       {menuList.map((item) => (
         <Link to={item.url} onClick={toggleMenu} key={item.name}>
           <ListItem
+            onClick={item.onClick}
             button
             sx={{
               ...(location.pathname === item.url && styles.selectedItem),

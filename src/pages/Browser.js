@@ -36,6 +36,7 @@ const useStyles = makeStyles({
     },
   },
   card: {
+    maxWidth: '195px',
     boxShadow: 'none !important',
     margin: '5px',
     borderRadius: '0 !important',
@@ -50,11 +51,12 @@ const useStyles = makeStyles({
   },
   addToList: {
     position: 'absolute !important',
+    color: '#fff !important',
     top: 5,
     right: 5,
     zIndex: 2,
     padding: '3px !important',
-    backgroundColor: 'rgba(255,255,255,0.5) !important',
+    backgroundColor: 'rgba(0,0,0,0.8) !important',
     borderRadius: '0 !important',
   },
 });
@@ -222,138 +224,86 @@ const Browser = ({
             </Stack>
           ) : null}
         </Stack>
-        <Grid container spacing={1}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            flexWrap: 'wrap',
+            flexShrink: 10,
+          }}
+        >
           {searchAssetsDisplay.map((asset, index) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={2}
-              key={`${asset.id}-${asset.asset_contract.address}-${index}`}
-            >
-              <Card className={classes.card} variant='outlined'>
-                <div
-                  style={{
-                    position: 'relative',
-                    width: '100%',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                >
-                  {watchLists.length &&
-                  watchLists.find((item) => item.id === asset.id) ? (
-                    <IconButton
-                      className={classes.addToList}
-                      onClick={() =>
-                        dispatch(
-                          removeWatchlistAsset(
-                            watchLists.filter(
-                              (item) => item.id !== asset.id && item
-                            )
+            <Card className={classes.card} variant='outlined'>
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                }}
+              >
+                {watchLists.length &&
+                watchLists.find((item) => item.id === asset.id) ? (
+                  <IconButton
+                    className={classes.addToList}
+                    onClick={() =>
+                      dispatch(
+                        removeWatchlistAsset(
+                          watchLists.filter(
+                            (item) => item.id !== asset.id && item
                           )
                         )
-                      }
-                    >
-                      <PlaylistRemove sx={{ fontSize: '16px', color: 'red' }} />
-                    </IconButton>
-                  ) : (
-                    <IconButton
-                      className={classes.addToList}
-                      onClick={() =>
-                        dispatch(
-                          addWatchlistAsset(
-                            asset.asset_contract.address,
-                            asset.token_id
-                          )
+                      )
+                    }
+                  >
+                    <PlaylistRemove
+                      sx={{ fontSize: '16px', color: '#DE1D4D' }}
+                    />
+                  </IconButton>
+                ) : (
+                  <IconButton
+                    className={classes.addToList}
+                    onClick={() =>
+                      dispatch(
+                        addWatchlistAsset(
+                          asset.asset_contract.address,
+                          asset.token_id
                         )
-                      }
-                    >
-                      <PlaylistAdd sx={{ fontSize: '16px' }} />
-                    </IconButton>
-                  )}
-                </div>
-                <CardMedia
-                  component='img'
-                  image={asset.image_url}
-                  alt={asset.token_id}
-                  sx={{
-                    objectFit: 'fill',
-                    borderRadius: '0 !important',
-                    objectPosition: 'center',
-                    maxHeight: '250px',
-                    width: '100%',
-                    boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.514) inset',
-                  }}
-                />
+                      )
+                    }
+                  >
+                    <PlaylistAdd sx={{ fontSize: '16px' }} />
+                  </IconButton>
+                )}
+              </div>
+              <CardMedia
+                component='img'
+                image={asset.image_url}
+                alt={asset.token_id}
+                sx={{
+                  objectFit: 'contain',
+                  borderRadius: '0 !important',
+                  objectPosition: 'center',
+                  maxHeight: '188px',
+                  width: '100%',
+                  boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.514) inset',
+                }}
+              />
 
-                <CardContent sx={{ maxHeight: 65 }}>
-                  <Grid container spacing={0}>
-                    <Grid item xs={8} sx={{ p: 0, mt: 0 }}>
-                      <Typography sx={{ fontSize: '14px' }}>
-                        {asset.token_id.length > 5
-                          ? asset.token_id.substring(0, 5) + '...'
-                          : asset.token_id}
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4} textAlign='right' sx={{ mt: -1, mr: -2 }}>
-                      {asset?.sell_orders?.length &&
-                      new Date(asset?.sell_orders[0]?.closing_date) >
-                        Date.now() ? (
-                        <>
-                          <span style={{ fontSize: '10px' }}>
-                            Listing price
-                          </span>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-end',
-                            }}
-                          >
-                            <img
-                              style={{ height: '12px', marginRight: '3px' }}
-                              src={
-                                asset.sell_orders[0].payment_token_contract
-                                  .image_url
-                              }
-                              alt={
-                                asset.sell_orders[0].payment_token_contract
-                                  .symbol
-                              }
-                            />
-                            <Typography
-                              sx={{ fontWeight: 'bold', fontSize: 14 }}
-                            >
-                              {formatEth(asset.sell_orders[0].base_price)}
-                            </Typography>
-                          </div>
-                        </>
-                      ) : asset?.last_sale && !asset?.orders?.length ? (
-                        <>
-                          <span style={{ fontSize: '10px' }}>Last sold</span>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-end',
-                            }}
-                          >
-                            <img
-                              style={{ height: '12px', marginRight: '3px' }}
-                              src={asset.last_sale.payment_token.image_url}
-                              alt={asset.last_sale.payment_token.symbol}
-                            />
-                            <Typography
-                              sx={{ fontSize: 12, fontWeight: 'bold' }}
-                            >
-                              {formatEth(asset.last_sale.total_price)}
-                            </Typography>
-                          </div>
-                        </>
-                      ) : null}
-                      {asset?.orders?.length &&
-                      new Date(asset?.orders[0]?.closing_date) > Date.now() ? (
+              <CardContent sx={{ maxHeight: 65 }}>
+                <Grid container spacing={0}>
+                  <Grid item xs={8} sx={{ p: 0, mt: 0 }}>
+                    <Typography sx={{ fontSize: '14px' }}>
+                      {asset.token_id.length > 5
+                        ? asset.token_id.substring(0, 5) + '...'
+                        : asset.token_id}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4} textAlign='right' sx={{ mt: -1, mr: -2 }}>
+                    {asset?.sell_orders?.length &&
+                    new Date(asset?.sell_orders[0]?.closing_date) >
+                      Date.now() ? (
+                      <>
+                        <span style={{ fontSize: '10px' }}>Listing price</span>
                         <div
                           style={{
                             display: 'flex',
@@ -361,31 +311,71 @@ const Browser = ({
                             justifyContent: 'flex-end',
                           }}
                         >
-                          <span
-                            style={{ fontSize: '10px', marginRight: '3px' }}
-                          >
-                            Highest offer
-                          </span>
                           <img
                             style={{ height: '12px', marginRight: '3px' }}
                             src={
-                              asset.orders[0].payment_token_contract.image_url
+                              asset.sell_orders[0].payment_token_contract
+                                .image_url
                             }
-                            alt={asset.orders[0].payment_token_contract.symbol}
+                            alt={
+                              asset.sell_orders[0].payment_token_contract.symbol
+                            }
                           />
-                          <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>
-                            {formatEth(asset.orders[0].base_price)}
+                          <Typography sx={{ fontWeight: 'bold', fontSize: 14 }}>
+                            {formatEth(asset.sell_orders[0].base_price)}
                           </Typography>
                         </div>
-                      ) : null}
-                    </Grid>
+                      </>
+                    ) : asset?.last_sale && !asset?.orders?.length ? (
+                      <>
+                        <span style={{ fontSize: '10px' }}>Last sold</span>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end',
+                          }}
+                        >
+                          <img
+                            style={{ height: '12px', marginRight: '3px' }}
+                            src={asset.last_sale.payment_token.image_url}
+                            alt={asset.last_sale.payment_token.symbol}
+                          />
+                          <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>
+                            {formatEth(asset.last_sale.total_price)}
+                          </Typography>
+                        </div>
+                      </>
+                    ) : null}
+                    {asset?.orders?.length &&
+                    new Date(asset?.orders[0]?.closing_date) > Date.now() ? (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-end',
+                        }}
+                      >
+                        <span style={{ fontSize: '10px', marginRight: '3px' }}>
+                          Highest offer
+                        </span>
+                        <img
+                          style={{ height: '12px', marginRight: '3px' }}
+                          src={asset.orders[0].payment_token_contract.image_url}
+                          alt={asset.orders[0].payment_token_contract.symbol}
+                        />
+                        <Typography sx={{ fontSize: 12, fontWeight: 'bold' }}>
+                          {formatEth(asset.orders[0].base_price)}
+                        </Typography>
+                      </div>
+                    ) : null}
                   </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           ))}
           {loading && <Loading />}
-        </Grid>
+        </Box>
       </Box>
     )
   );

@@ -37,6 +37,9 @@ const api = {
       options
     );
   },
+  getUserDetails: (account) => {
+    return axios.get(`${API_BASE_URI}/account/${account}`, options);
+  },
   getUserAssets: (account, offset, limit) => {
     return axios.get(
       `${API_BASE_URI}/assets?owner=${account}&offset=${offset}&limit=${limit}`,

@@ -26,6 +26,7 @@ const initialState = {
     },
     userData: {
       web3Address: '',
+      userDetails: {},
       totalAssetsCount: 0,
       userCollections: [],
       collectionNames: [],
