@@ -100,12 +100,12 @@ const Dashboard = ({
                     </TableCell>
                     <TableCell
                       className={classes.cell}
-                      onClick={() =>
+                      onClick={() => {
                         handleCollectionSearch(
                           asset.asset_contract.address,
                           asset.collection.name
-                        )
-                      }
+                        );
+                      }}
                     >
                       <Link to={`/collection/${asset.collection.slug}`}>
                         {asset.collection.name}

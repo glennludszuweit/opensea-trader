@@ -24,6 +24,12 @@ const reducers = {
           },
         };
 
+      case 'GET_SNIPED_ASSETS':
+        return {
+          ...state,
+          snipedAssets: action.snipedAssets,
+        };
+
       case 'GET_COLLECTION_ASSETS':
         const searchedAssets = filterDuplicateObjects([
           ...state.searched.assets,

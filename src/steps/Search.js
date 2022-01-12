@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getAssets } from '../redux/actions';
 import { Button, Grid, Input, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { makeStyles } from '@mui/styles';
@@ -48,7 +47,6 @@ const Search = ({ setStep, assignedStep }) => {
 
   const handleProceed = () => {
     setStep(assignedStep + 1);
-    dispatch(getAssets(tokenAddress, tokenIds));
   };
 
   const handleTokenAddressChange = (e) => {

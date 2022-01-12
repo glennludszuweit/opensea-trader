@@ -1,14 +1,20 @@
+import { OrderSide } from 'opensea-js/lib/types';
+import { formatEth } from '../utils';
 import api from './api';
 
 const actions = {
   getAsset: (tokenAddress, tokenId) => async (dispatch) => {
     try {
       const { data } = await api.getAsset(tokenAddress, tokenId);
+      const res = await api.getAssetEvents(tokenAddress, tokenId);
+      const events = await res.data.asset_events;
 
-      console.log(data);
+      const searchedAsset = { ...data, events };
+
+      console.log(searchedAsset);
       dispatch({
         type: 'GET_ASSET',
-        searchedAsset: data,
+        searchedAsset,
       });
     } catch (error) {
       console.log(error.message);
@@ -16,6 +22,46 @@ const actions = {
         type: 'GET_ASSET',
         searchedAsset: {},
       });
+    }
+  },
+  getSnipedAssets: (tokenAddress, floor, seaport) => async (dispatch) => {
+    try {
+      const response = await api.getCollectionEvents(tokenAddress);
+      const { asset_events } = await response.data;
+      const sellEvents = await Promise.all(
+        asset_events.filter(
+          (event) =>
+            event?.auction_type === 'dutch' &&
+            event?.payment_token?.symbol === 'ETH' &&
+            formatEth(event?.starting_price) <= floor &&
+            event?.asset?.owner?.address === event?.seller?.address
+        )
+      );
+
+      const ids = sellEvents.map((el) => el?.asset?.token_id);
+
+      const { orders, count } = await seaport.api.getOrders({
+        asset_contract_address: tokenAddress,
+        token_ids: ids,
+        side: OrderSide.Sell,
+      });
+
+      const seen = new Set();
+
+      const snipedAssets = orders.filter(
+        (value, index, self) =>
+          index ===
+          self.findIndex((t) => t.asset.token_id === value.asset.token_id)
+      );
+
+      console.log(snipedAssets);
+
+      dispatch({
+        type: 'GET_SNIPED_ASSETS',
+        snipedAssets,
+      });
+    } catch (error) {
+      console.log(error.message);
     }
   },
   getCollectionAssets:
@@ -143,7 +189,7 @@ export const {
   getUserAssets,
   getUserAssetsOrders,
   getAsset,
-  getAssets,
+  getSnipedAssets,
   getCollectionAssets,
   removeCollectionAssets,
   removeOrderAsset,

@@ -1,5 +1,4 @@
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
+import { Box, Typography, CircularProgress } from '@mui/material';
 
 const Loading = () => {
   const styles = {
@@ -16,7 +15,7 @@ const Loading = () => {
     },
   };
   return (
-    <Box sx={styles.box}>
+    <Box component={Typography} sx={styles.box}>
       <CircularProgress sx={styles.loading} />
     </Box>
   );

@@ -5,6 +5,7 @@ import {
   Timer,
   ShoppingCart,
   Storefront,
+  LocationSearchingSharp,
 } from '@mui/icons-material';
 
 const LeftSideNav = ({ openSideNav, toggleMenu }) => {
@@ -34,6 +35,7 @@ const LeftSideNav = ({ openSideNav, toggleMenu }) => {
     },
   };
   const menuList = [
+    { url: '/snipe', name: 'Snipe', icon: <LocationSearchingSharp /> },
     { url: '/offers', name: 'Send Offers', icon: <LocalOffer /> },
     { url: '/auction', name: 'Open Auction', icon: <Timer /> },
     { url: '/buy', name: 'Buy', icon: <ShoppingCart /> },

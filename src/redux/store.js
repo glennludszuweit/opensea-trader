@@ -4,9 +4,12 @@ import { user, collections, error } from './reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import localForage from 'localforage';
+import { top500Collections } from '../data';
 
 const initialState = {
+  collectionsAddresses: top500Collections,
   collections: {
+    snipedAssets: [],
     searched: {
       collection: {},
       assets: [],
@@ -52,7 +55,10 @@ const reducers = combineReducers({
 });
 const rootReducer = (state, action) => {
   if (action.type === 'CLEAR_DATA') {
-    return reducers(undefined, action);
+    return reducers(
+      { ...initialState, collectionsAddresses: state.collectionsAddresses },
+      action
+    );
   }
   return reducers(state, action);
 };

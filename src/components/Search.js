@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { LocationSearching } from '@mui/icons-material';
+import { ImageSearch } from '@mui/icons-material';
 import { Autocomplete, InputAdornment, TextField } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { top500Collections } from '../data';
@@ -77,7 +77,7 @@ const Search = ({ searchResults, handleCollectionSearch }) => {
                 sx={{ position: 'absolute', right: 8 }}
                 onClick={(e, v) => console.log(v)}
               >
-                <LocationSearching />
+                <ImageSearch />
               </InputAdornment>
             ),
           }}

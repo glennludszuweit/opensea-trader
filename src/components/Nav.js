@@ -70,8 +70,6 @@ const Nav = ({
               <Connect setAccount={setAccount} />
             ) : (
               <Button
-                variant='contained'
-                color='secondary'
                 onClick={() => {
                   setOpenSideNav({
                     left: false,
@@ -81,19 +79,25 @@ const Nav = ({
                 sx={{
                   borderRadius: '0 !important',
                   p: 0,
+                  width: '2.75em !important',
                 }}
               >
                 <img
-                  style={{ height: '2.5em', width: '2.5em', margin: '.25em' }}
+                  style={{
+                    height: '2.5em',
+                    width: '2.5em',
+                    border: '2px solid transparent',
+                    boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.514)',
+                  }}
                   src={userDetails?.profile_img_url}
-                  alt={userDetails?.user.username}
+                  alt={userDetails?.user?.username}
                 />
-                <Typography sx={{ px: 1, textTransform: 'none' }}>
+                {/* <Typography sx={{ px: 1, textTransform: 'none' }}>
                   {web3Address.substring(0, 4) +
                     '...' +
                     web3Address.substring(web3Address.length - 4)}
-                  {/* {userDetails?.user.username} */}
-                </Typography>
+                </Typography> */}
+                {/* {userDetails?.user.username} */}
               </Button>
             )}
           </Grid>

@@ -39,7 +39,7 @@ const RightSideNav = ({ openSideNav, toggleMenu, setAccount }) => {
         setAccount('');
         dispatch(clearData());
       },
-      url: '#',
+      url: '/',
       name: 'Logout',
       icon: <LogoutSharp />,
     },

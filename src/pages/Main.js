@@ -1,24 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import api from '../redux/api';
 import {
   getUserAssets,
   getUserAssetsOrders,
   removeOrderAsset,
   getAsset,
-  getCollectionAssets,
   getUserData,
-  clearData,
   removeCollectionAssets,
+  getSnipedAssets,
 } from '../redux/actions';
-import {
-  Paper,
-  Container,
-  Toolbar,
-  Box,
-  CssBaseline,
-  IconButton,
-} from '@mui/material';
+import { Paper, Container, Toolbar, Box, CssBaseline } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import Nav from '../components/Nav';
 import LeftSideNav from '../components/LeftSideNav';
@@ -33,6 +26,7 @@ import Browser from './Browser';
 import Dashboard from './Dashboard';
 import SearchFilter from '../components/SearchFilter';
 import Loading from '../components/Loading';
+import Snipe from './Snipe';
 
 const useStyles = makeStyles({
   root: {
@@ -63,6 +57,7 @@ const Main = ({ seaport }) => {
   const userCollections = useSelector(
     (state) => state.user.userData.userCollections
   );
+  const snipedAssets = useSelector((state) => state.collections.snipedAssets);
   const searchedAssets = useSelector(
     (state) => state.collections.searched.assets
   );
@@ -85,10 +80,7 @@ const Main = ({ seaport }) => {
     left: false,
     right: false,
   });
-  const [account, setAccount] = useState(
-    // '0x0b1b80fa4f13d193e65779ca2bb6431a55b1b4cf'
-    ''
-  );
+  const [account, setAccount] = useState('');
   const [reviewedAssets, setReviewedAssets] = useState([]);
   const [searchResults, setSearchResults] = useState({
     name: '',
@@ -110,6 +102,8 @@ const Main = ({ seaport }) => {
   const [traitsFilter, setTraitsFilter] = useState([]);
   const [traitCounts, setTraitCounts] = useState([]);
   const [traitCount, setTraitCount] = useState(0);
+  //Asset detail
+  const [viewAsset, setViewAsset] = useState({});
 
   useEffect(() => {
     if (!web3Address) {
@@ -169,6 +163,16 @@ const Main = ({ seaport }) => {
     traitCount ||
     traitsFilter.length;
 
+  const handleAssetView = async (asset) => {
+    setViewAsset({});
+    const { data } = await api.getAssetEvents(
+      asset?.asset_contract?.address,
+      asset?.token_id
+    );
+    const events = data.asset_events;
+    setViewAsset({ ...asset, events });
+  };
+
   const toggleMenu = () => {
     setOpenSideNav({
       left: false,
@@ -201,6 +205,7 @@ const Main = ({ seaport }) => {
   };
 
   const commonStateProps = {
+    seaport,
     web3Address,
     userDetails,
     userAssets,
@@ -225,6 +230,7 @@ const Main = ({ seaport }) => {
     searchIndex,
     limit,
     setSearchIndex,
+    snipedAssets,
     searchOffset,
     setSearchOffset,
     assetSearch,
@@ -246,6 +252,8 @@ const Main = ({ seaport }) => {
     searchAssetsDisplay,
     setSearchAssetsDisplay,
     handleCollectionSearch,
+    viewAsset,
+    handleAssetView,
   };
 
   return (
@@ -266,6 +274,10 @@ const Main = ({ seaport }) => {
                   exact
                   path='/'
                   element={<Dashboard {...commonStateProps} />}
+                />
+                <Route
+                  path='/snipe'
+                  element={<Snipe {...commonStateProps} />}
                 />
                 <Route
                   path='/asset/:collection/:id'

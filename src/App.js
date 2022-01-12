@@ -1,4 +1,4 @@
-import { OpenSeaPort, Network } from 'opensea-js';
+import { OpenSeaPort, Network, EventType } from 'opensea-js';
 import { variables } from './config';
 import { ThemeProvider } from '@mui/material/styles';
 import Main from './pages/Main';

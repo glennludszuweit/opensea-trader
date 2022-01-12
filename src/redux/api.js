@@ -13,9 +13,21 @@ const api = {
   getAsset: (tokenAddress, id) => {
     return axios.get(`${API_BASE_URI}/asset/${tokenAddress}/${id}`, options);
   },
+  getAssetEvents: (tokenAddress, tokenId) => {
+    return axios.get(
+      `${API_BASE_URI}/events?asset_contract_address=${tokenAddress}&token_id=${tokenId}`,
+      options
+    );
+  },
   getAssets: (tokenAddress, offset, limit) => {
     return axios.get(
       `${API_BASE_URI}/assets?asset_contract_address=${tokenAddress}&offset=${offset}&limit=${limit}&order_by=sale_date`,
+      options
+    );
+  },
+  getCollectionEvents: (tokenAddress) => {
+    return axios.get(
+      `${API_BASE_URI}/events?asset_contract_address=${tokenAddress}&event_type=created&only_opensea=true&offset=0&limit=30`,
       options
     );
   },
@@ -28,6 +40,12 @@ const api = {
   getAssetsOrders: (tokenAddress, tokenId) => {
     return axios.get(
       `${ORDERS_API_URI}/orders?asset_contract_address=${tokenAddress}&token_id=${tokenId}&bundled=false&include_bundled=false&limit=5&offset=0&order_by=created_date&order_direction=asc`,
+      orderOptions
+    );
+  },
+  getSnipedAssets: (tokenAddress, ids) => {
+    return axios.get(
+      `${ORDERS_API_URI}/orders?asset_contract_address=${tokenAddress}&${ids}&bundled=false&include_bundled=false&side=1&limit=50&offset=0&order_by=created_date`,
       orderOptions
     );
   },
